@@ -314,7 +314,9 @@
               </div>
               <div class="field">
                 <label for="phone">טלפון</label>
-                <input type="tel" id="phone" name="phone" autocomplete="tel" inputmode="tel" required>
+                <input type="tel" id="phone" name="phone" autocomplete="tel" inputmode="tel" required
+                  pattern="0\d{1,2}-?\d{7}" placeholder="050-1234567"
+                  title="מספר טלפון ישראלי, לדוגמה 050-1234567 או 03-1234567">
               </div>
               <div class="field">
                 <label for="email">אימייל</label>

@@ -65,6 +65,21 @@
     });
   }
 
+  // ---------- גלילה חלקה בלחיצה על קישורים פנימיים ----------
+  // מכוונת רק ידנית ל-JS (ולא scroll-behavior:smooth על ה-html), כדי
+  // שגלילת מגע טבעית באצבע לא תתנגש עם אנימציית הגלילה של הדפדפן
+  var prefersReducedMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  document.querySelectorAll('a[href^="#"]').forEach(function (link) {
+    link.addEventListener("click", function (event) {
+      var id = link.getAttribute("href");
+      if (!id || id.length < 2) return;
+      var target = document.querySelector(id);
+      if (!target) return;
+      event.preventDefault();
+      target.scrollIntoView({ behavior: prefersReducedMotion ? "auto" : "smooth", block: "start" });
+    });
+  });
+
   // ---------- חשיפה בגלילה ----------
   var revealEls = document.querySelectorAll(".reveal");
   if (revealEls.length && "IntersectionObserver" in window) {

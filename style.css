@@ -22,7 +22,7 @@
   --cut-lg:32px;
 }
 *{box-sizing:border-box}
-html{scroll-behavior:smooth}
+html{scroll-behavior:auto}
 body{
   margin:0;
   background:var(--paper);
@@ -79,6 +79,7 @@ section{padding:clamp(56px,9vw,96px) 0}
 /* ---------- signature geometry: mitred corner + inlay ---------- */
 .frame{
   position:relative;
+  min-width:0;
   clip-path:polygon(0 0, calc(100% - var(--cut-lg)) 0, 100% var(--cut-lg), 100% 100%, 0 100%);
   background:var(--walnut);
   box-shadow:var(--shadow);
@@ -166,7 +167,7 @@ section{padding:clamp(56px,9vw,96px) 0}
 .trust-item{display:flex;flex-direction:column;gap:2px}
 .trust-item b{font-family:"Frank Ruhl Libre",serif;font-size:22px;font-weight:500;color:var(--walnut)}
 .trust-item span{font-size:12.5px;color:var(--ink-soft)}
-.hero-figure{position:relative}
+.hero-figure{position:relative;min-width:0}
 .hero-figure .frame{aspect-ratio:4/5;width:100%}
 .float-card{
   position:absolute;bottom:-24px;right:-16px;background:var(--card);color:var(--ink);
@@ -213,7 +214,7 @@ blockquote.pull cite{display:block;margin-top:10px;font-family:"Rubik",sans-seri
 
 /* ---------- materials: real wood photos ---------- */
 .materials-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
-.wood-card{background:var(--card);border:1px solid var(--line);box-shadow:var(--shadow-sm);transition:transform .3s ease,box-shadow .3s ease}
+.wood-card{background:var(--card);border:1px solid var(--line);box-shadow:var(--shadow-sm);transition:transform .3s ease,box-shadow .3s ease;min-width:0}
 .wood-card:hover{transform:translateY(-6px);box-shadow:var(--shadow)}
 .wood-swatch{display:block;width:100%;aspect-ratio:985/350;object-fit:cover}
 .wood-card-body{padding:20px 22px 24px}
@@ -262,7 +263,7 @@ blockquote.pull cite{display:block;margin-top:10px;font-family:"Rubik",sans-seri
    crops instead of slicing off the sides of a wide subject like a
    dining table. */
 .gallery-grid{display:grid;grid-template-columns:1fr 1fr;gap:26px}
-.gallery-grid figure{margin:0;position:relative;display:flex;flex-direction:column}
+.gallery-grid figure{margin:0;position:relative;display:flex;flex-direction:column;min-width:0}
 .gallery-grid figure.big{grid-column:1/-1}
 .gallery-grid .frame{aspect-ratio:16/9}
 .gallery-grid .frame__inner{overflow:hidden}
@@ -299,6 +300,7 @@ blockquote.pull cite{display:block;margin-top:10px;font-family:"Rubik",sans-seri
 
 /* ---------- contact / lead form ---------- */
 .lead-inner{display:grid;grid-template-columns:.8fr 1.2fr;gap:56px;align-items:start}
+.lead-figure{min-width:0}
 .lead-figure .frame{aspect-ratio:4/3}
 .contact-block{margin-top:24px}
 .contact-line{display:flex;gap:12px;align-items:flex-start;margin-top:14px;font-size:14.5px}
@@ -339,16 +341,3 @@ footer{background:var(--walnut-deep);color:#D9C6A8;padding:52px 0 28px}
 .footer-links a:hover{color:var(--oak)}
 .footer-legal{padding-top:22px;font-size:12.5px;color:rgba(217,198,168,.6);text-align:center}
 @media (max-width:640px){.footer-inner{flex-direction:column}}
-
-/* ---------- mobile call bar ---------- */
-.mobile-call-bar{
-  position:fixed;bottom:16px;inset-inline:16px;z-index:60;
-  display:flex;align-items:center;justify-content:center;gap:10px;
-  background:var(--walnut);color:var(--paper);
-  text-decoration:none;font-weight:700;font-size:15px;padding:15px;
-  clip-path:polygon(0 0, calc(100% - var(--cut)) 0, 100% var(--cut), 100% 100%, 0 100%);
-  box-shadow:var(--shadow);
-}
-.mobile-call-bar svg{width:19px;height:19px}
-@media (min-width:900px){.mobile-call-bar{display:none}}
-@media (max-width:899px){#contact{padding-bottom:96px}footer{padding-bottom:96px}}

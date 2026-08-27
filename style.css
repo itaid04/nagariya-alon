@@ -120,7 +120,9 @@ section{padding:clamp(56px,9vw,96px) 0}
 .tel-link{font-size:15px;font-weight:700;text-decoration:none;color:var(--walnut);border-bottom:1.5px solid currentColor;padding-bottom:2px}
 
 /* ---------- nav ---------- */
-.nav{position:sticky;top:0;z-index:50;background:rgba(243,234,214,.97);border-bottom:1px solid var(--line)}
+.nav{position:fixed;top:0;left:0;right:0;z-index:50;background:rgba(243,234,214,.97);border-bottom:1px solid var(--line)}
+#top{padding-top:92px}
+[id]{scroll-margin-top:110px}
 .nav-inner{display:flex;align-items:center;justify-content:space-between;padding:15px 0}
 .brand{display:flex;align-items:center;gap:10px;text-decoration:none}
 .brand-mark{

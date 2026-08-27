@@ -14,7 +14,7 @@
   --walnut-deep:#301D0C;
   --oak:#B9874C;
   --ink:#2B2013;
-  --ink-soft:#6B5A42;
+  --ink-soft:#5A4A30;
   --line:rgba(43,32,19,.16);
   --shadow:0 22px 48px -26px rgba(43,32,19,.4);
   --shadow-sm:0 10px 22px -14px rgba(43,32,19,.42);
@@ -57,10 +57,23 @@ section{padding:clamp(56px,9vw,96px) 0}
 .section-head .lede{margin-top:16px;font-size:17px;color:var(--ink-soft);line-height:1.75}
 .bg-deep{background:var(--paper-deep)}
 
-/* ---------- reveal on scroll ---------- */
+/* ---------- reveal on scroll (staggered) ---------- */
 @media (prefers-reduced-motion:no-preference){
-  .reveal{opacity:0;transform:translateY(20px);transition:opacity .7s ease,transform .7s ease}
+  .reveal{opacity:0;transform:translateY(22px);transition:opacity .7s ease,transform .7s ease;transition-delay:var(--stagger,0ms)}
   .reveal.in-view{opacity:1;transform:translateY(0)}
+  .stagger-1{--stagger:0ms}
+  .stagger-2{--stagger:110ms}
+  .stagger-3{--stagger:220ms}
+  .stagger-4{--stagger:330ms}
+  .stagger-5{--stagger:440ms}
+
+  /* ---------- hero load-in choreography ---------- */
+  @keyframes rise{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+  .hero .eyebrow{animation:rise .7s ease both}
+  .hero h1{animation:rise .7s ease .09s both}
+  .hero .lede{animation:rise .7s ease .18s both}
+  .hero .cta-row{animation:rise .7s ease .27s both}
+  .hero .trust-row{animation:rise .7s ease .36s both}
 }
 
 /* ---------- signature geometry: mitred corner + inlay ---------- */
@@ -179,28 +192,32 @@ blockquote.pull{
 blockquote.pull cite{display:block;margin-top:10px;font-family:"Rubik",sans-serif;font-style:normal;font-size:13.5px;font-weight:700;color:var(--walnut)}
 .fact-grid{margin-top:30px;padding-top:26px;border-top:1px solid var(--line);display:grid;grid-template-columns:1fr 1fr;gap:18px 24px}
 .fact-item{display:flex;align-items:flex-start;gap:12px}
-.fact-item svg{width:22px;height:22px;color:var(--walnut);flex:none;margin-top:2px}
-.fact-item b{display:block;font-size:14.5px;color:var(--ink)}
-.fact-item span{display:block;font-size:13px;color:var(--ink-soft);margin-top:2px;line-height:1.5}
+.fact-item svg{width:22px;height:22px;color:var(--walnut);flex:none;margin-top:2px;transition:transform .3s ease,color .3s ease}
+.fact-item:hover svg{transform:scale(1.15);color:var(--walnut-deep)}
+.fact-item b{display:block;font-size:15px;color:var(--ink);font-weight:700}
+.fact-item span{display:block;font-size:13.5px;color:var(--ink-soft);margin-top:3px;line-height:1.55}
 @media (max-width:860px){.about-inner{grid-template-columns:1fr}.about-inner .frame{max-width:300px;margin-inline:auto}}
 @media (max-width:560px){.fact-grid{grid-template-columns:1fr}}
 
 /* ---------- services: ledger rows ---------- */
 .ledger{margin-top:8px;border-top:1px solid var(--line)}
-.ledger-row{display:grid;grid-template-columns:64px 1fr;gap:24px;padding:30px 0;border-bottom:1px solid var(--line);align-items:start}
-.ledger-num{font-family:"Frank Ruhl Libre",serif;font-size:28px;color:var(--walnut);font-weight:500;line-height:1}
-.ledger-row h3{font-size:19px}
-.ledger-row p{margin-top:8px;font-size:14.5px;color:var(--ink-soft);max-width:60ch;line-height:1.65}
+.ledger-row{display:grid;grid-template-columns:64px 1fr;gap:24px;padding:30px 0;border-bottom:1px solid var(--line);align-items:start;transition:transform .3s ease,padding-inline-start .3s ease}
+.ledger-row:hover{transform:translateX(-6px)}
+.ledger-num{font-family:"Frank Ruhl Libre",serif;font-size:30px;color:var(--walnut);font-weight:500;line-height:1;transition:color .3s ease}
+.ledger-row:hover .ledger-num{color:var(--walnut-deep)}
+.ledger-row h3{font-size:20px}
+.ledger-row p{margin-top:8px;font-size:15px;color:var(--ink-soft);max-width:60ch;line-height:1.65}
 @media (max-width:560px){.ledger-row{grid-template-columns:40px 1fr;gap:16px}}
 
 /* ---------- materials: real wood photos ---------- */
 .materials-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
-.wood-card{background:var(--card);border:1px solid var(--line);box-shadow:var(--shadow-sm)}
+.wood-card{background:var(--card);border:1px solid var(--line);box-shadow:var(--shadow-sm);transition:transform .3s ease,box-shadow .3s ease}
+.wood-card:hover{transform:translateY(-6px);box-shadow:var(--shadow)}
 .wood-swatch{display:block;width:100%;aspect-ratio:985/350;object-fit:cover}
 .wood-card-body{padding:20px 22px 24px}
-.wood-card-body h3{font-size:18px}
-.wood-card-body p{margin-top:8px;font-size:13.5px;color:var(--ink-soft);line-height:1.6}
-.materials-note{margin-top:28px;font-size:14.5px;color:var(--ink-soft);max-width:64ch}
+.wood-card-body h3{font-size:19px}
+.wood-card-body p{margin-top:8px;font-size:14.5px;color:var(--ink-soft);line-height:1.6}
+.materials-note{margin-top:28px;font-size:15px;font-weight:500;color:var(--ink-soft);max-width:64ch}
 @media (max-width:760px){.materials-grid{grid-template-columns:1fr}}
 
 /* ---------- process ---------- */
@@ -220,8 +237,8 @@ blockquote.pull cite{display:block;margin-top:10px;font-family:"Rubik",sans-seri
   font-family:"Frank Ruhl Libre",serif;font-size:15px;color:var(--walnut);margin-bottom:16px;
 }
 .bg-deep .timeline-num{background:var(--paper-deep)}
-.timeline-step h3{font-size:16px}
-.timeline-step p{margin-top:8px;font-size:13.5px;color:var(--ink-soft);line-height:1.6}
+.timeline-step h3{font-size:17px}
+.timeline-step p{margin-top:8px;font-size:14.5px;color:var(--ink-soft);line-height:1.6}
 @media (max-width:900px){
   .timeline{grid-template-columns:1fr;gap:0;margin-top:20px}
   .timeline::before{display:none}
@@ -238,16 +255,38 @@ blockquote.pull cite{display:block;margin-top:10px;font-family:"Rubik",sans-seri
 @media (max-width:860px){.workshop-inner{grid-template-columns:1fr}}
 
 /* ---------- gallery: one big project shot + two stacked ---------- */
-.gallery-grid{display:grid;grid-template-columns:1.3fr 1fr;grid-template-rows:repeat(2,clamp(160px,19vw,230px));gap:20px}
+.gallery-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:26px}
 .gallery-grid figure{margin:0;position:relative;display:flex;flex-direction:column}
 .gallery-grid figure.big{grid-row:1/3}
-.gallery-grid .frame{flex:1;width:100%}
-.gallery-grid figcaption{margin-top:10px;font-size:13px;color:var(--ink-soft);text-align:center}
-@media (max-width:700px){
-  .gallery-grid{grid-template-columns:1fr;grid-template-rows:none}
-  .gallery-grid figure.big{grid-row:auto}
-  .gallery-grid .frame{aspect-ratio:4/3}
+.gallery-grid figure.big .frame{height:100%}
+.gallery-grid figure:not(.big) .frame{aspect-ratio:4/3}
+.gallery-grid .frame__inner{overflow:hidden}
+.gallery-grid .frame img{transition:transform .6s cubic-bezier(.16,1,.3,1)}
+.gallery-grid figure:hover .frame img{transform:scale(1.06)}
+.gallery-grid figcaption{
+  margin-top:14px;font-size:13.5px;font-weight:700;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--walnut);text-align:center;
 }
+@media (max-width:700px){
+  .gallery-grid{grid-template-columns:1fr;gap:36px}
+  .gallery-grid figure.big{grid-row:auto}
+  .gallery-grid figure.big .frame{height:auto;aspect-ratio:4/3}
+}
+
+/* ---------- warranty / pricing: stat cards ---------- */
+.stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;max-width:760px;margin:0 auto}
+.stat-card{
+  background:var(--card);
+  clip-path:polygon(0 0, calc(100% - var(--cut-lg)) 0, 100% var(--cut-lg), 100% 100%, 0 100%);
+  box-shadow:var(--shadow-sm);
+  padding:clamp(30px,4vw,44px) 32px;text-align:center;
+  transition:transform .3s ease,box-shadow .3s ease;
+}
+.stat-card:hover{transform:translateY(-6px);box-shadow:var(--shadow)}
+.stat-card svg{width:30px;height:30px;color:var(--walnut);margin:0 auto 16px}
+.stat-card b{display:block;font-family:"Frank Ruhl Libre",serif;font-weight:500;font-size:clamp(30px,3.6vw,38px);color:var(--ink);margin-bottom:10px}
+.stat-card p{font-size:15.5px;font-weight:600;color:var(--ink);line-height:1.6}
+@media (max-width:560px){.stat-grid{grid-template-columns:1fr;max-width:340px}}
 
 /* ---------- offer band: flat, no gradient ---------- */
 .offer-band{background:var(--walnut);color:var(--paper);padding:64px 0;text-align:center}

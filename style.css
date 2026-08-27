@@ -320,7 +320,7 @@ blockquote.pull cite{display:block;margin-top:10px;font-family:"Rubik",sans-seri
 #lead-submit-btn[disabled]{opacity:.6;cursor:not-allowed}
 .lead-form[hidden]{display:none}
 .form-success{text-align:center;padding:34px 10px}
-.form-success svg{width:46px;height:46px;color:var(--walnut);margin-bottom:16px}
+.form-success svg{width:46px;height:46px;color:var(--walnut);margin:0 auto 16px}
 .form-success h3{font-size:22px;color:var(--ink)}
 .form-success p{margin-top:8px;color:var(--ink-soft)}
 @media (max-width:960px){.lead-inner{grid-template-columns:1fr}.lead-figure .frame{max-width:300px;margin-inline:auto}.form-panel{padding:26px}}

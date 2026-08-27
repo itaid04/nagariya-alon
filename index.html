@@ -308,14 +308,27 @@
                 <label for="phone">טלפון</label>
                 <input type="tel" id="phone" name="phone" autocomplete="tel" inputmode="tel" required>
               </div>
+              <div class="field">
+                <label for="email">אימייל</label>
+                <input type="email" id="email" name="email" autocomplete="email" required>
+              </div>
+              <div class="field">
+                <label for="preferred-time">זמן מועדף ליצירת קשר</label>
+                <select id="preferred-time" name="preferred_time">
+                  <option value="אין העדפה">אין העדפה</option>
+                  <option value="בוקר">בוקר</option>
+                  <option value="צהריים">צהריים</option>
+                  <option value="ערב">ערב</option>
+                </select>
+              </div>
               <div class="field full">
-                <label for="looking-for">מה אתם מחפשים?</label>
-                <select id="looking-for" name="looking-for" required>
+                <label for="service">מה אתם מחפשים?</label>
+                <select id="service" name="service" required>
                   <option value="" disabled selected>בחרו קטגוריה</option>
-                  <option value="table">שולחן אוכל / סלון</option>
-                  <option value="storage">ארון / מזנון</option>
-                  <option value="shelving">ספרייה / קיר אחסון</option>
-                  <option value="other">משהו אחר</option>
+                  <option>שולחן אוכל / סלון</option>
+                  <option>ארון / מזנון</option>
+                  <option>ספרייה / קיר אחסון</option>
+                  <option>משהו אחר</option>
                 </select>
               </div>
               <div class="field full">
@@ -323,7 +336,8 @@
                 <textarea id="message" name="message" rows="3"></textarea>
               </div>
             </div>
-            <button type="submit" class="btn btn-primary btn-block">שליחת פרטים</button>
+            <button type="submit" class="btn btn-primary btn-block" id="lead-submit-btn">שליחת פרטים</button>
+            <p class="form-error" id="form-error" role="alert" hidden>אירעה שגיאה בשליחת הטופס. נסו שוב, או התקשרו אלינו ל-<a href="tel:0540000000">054-000-0000</a>.</p>
             <p class="form-note">נשתמש בפרטים רק כדי לחזור אליכם בנוגע לפרויקט.</p>
           </form>
 

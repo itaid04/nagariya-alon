@@ -17,17 +17,51 @@
   }
 
   // ---------- טופס לידים ----------
-  // אין עדיין חיבור לשרת/n8n, לכן מוצג מצב הצלחה מקומי בלבד.
-  // כשמתחברים ל-n8n: להחליף את ה-preventDefault בשליחת fetch/POST אמיתית ל-webhook.
+  var LEAD_WEBHOOK_URL = "https://itaid04.app.n8n.cloud/webhook/nagariya-alon-lead-form";
   var form = document.getElementById("lead-form");
   var success = document.getElementById("form-success");
+  var errorBox = document.getElementById("form-error");
+  var submitBtn = document.getElementById("lead-submit-btn");
   if (form && success) {
     form.addEventListener("submit", function (event) {
       event.preventDefault();
       if (!form.reportValidity()) return;
-      form.hidden = true;
-      success.hidden = false;
-      success.focus({ preventScroll: false });
+
+      if (errorBox) errorBox.hidden = true;
+      submitBtn.disabled = true;
+      submitBtn.textContent = "שולחים...";
+
+      var payload = {
+        name: form.name.value.trim(),
+        phone: form.phone.value.trim(),
+        email: form.email.value.trim(),
+        service: form.service.value,
+        preferred_time: form.preferred_time.value,
+        message: form.message.value.trim()
+      };
+
+      fetch(LEAD_WEBHOOK_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      })
+        .then(function (res) {
+          if (!res.ok) throw new Error("webhook responded with " + res.status);
+          return res.json().catch(function () { return {}; });
+        })
+        .then(function (data) {
+          if (data && data.message) {
+            success.querySelector("p").textContent = data.message;
+          }
+          form.hidden = true;
+          success.hidden = false;
+          success.focus({ preventScroll: false });
+        })
+        .catch(function () {
+          submitBtn.disabled = false;
+          submitBtn.textContent = "שליחת פרטים";
+          if (errorBox) errorBox.hidden = false;
+        });
     });
   }
 

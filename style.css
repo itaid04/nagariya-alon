@@ -275,6 +275,9 @@ blockquote.pull cite{display:block;margin-top:10px;font-family:"Rubik",sans-seri
 .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--walnut);outline:none}
 .form-panel .btn{margin-top:20px}
 .form-note{margin-top:14px;font-size:12.5px;color:var(--ink-soft);text-align:center}
+.form-error{margin-top:14px;font-size:13px;color:#8a3320;text-align:center;background:rgba(138,51,32,.08);padding:10px 14px;border-radius:2px}
+.form-error a{color:inherit;font-weight:700}
+#lead-submit-btn[disabled]{opacity:.6;cursor:not-allowed}
 .lead-form[hidden]{display:none}
 .form-success{text-align:center;padding:34px 10px}
 .form-success svg{width:46px;height:46px;color:var(--walnut);margin-bottom:16px}

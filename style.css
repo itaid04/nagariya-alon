@@ -424,7 +424,10 @@ blockquote.pull cite{display:block;margin-top:10px;font-family:"Rubik",sans-seri
 .chat-input-row{display:flex;align-items:center;gap:8px;padding:12px;border-top:1px solid var(--line);background:var(--card);flex:none}
 .chat-input-row input{
   flex:1;border:1px solid var(--line);border-radius:999px;padding:10px 14px;
-  font:inherit;font-size:14.5px;background:var(--paper);color:var(--ink);
+  font:inherit;background:var(--paper);color:var(--ink);
+  /* iOS Safari auto-zooms the whole page on focus if an input's font-size
+     is under 16px - that zoom is what was cutting off/squeezing the panel */
+  font-size:16px;
 }
 .chat-input-row input:focus{outline:2px solid var(--walnut);outline-offset:1px}
 .chat-send{

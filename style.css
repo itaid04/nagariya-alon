@@ -364,7 +364,10 @@ blockquote.pull cite{display:block;margin-top:10px;font-family:"Rubik",sans-seri
 @media (max-width:560px){.form-grid{grid-template-columns:1fr}}
 
 /* ---------- AI chat widget ---------- */
-.chat-widget{position:fixed;left:20px;bottom:20px;z-index:60}
+/* --kb-offset is kept in sync with window.visualViewport by script.js,
+   so the widget stays pinned above the on-screen keyboard on iOS Safari
+   instead of drifting with the page when a text field is focused. */
+.chat-widget{position:fixed;left:20px;bottom:calc(20px + var(--kb-offset, 0px));z-index:60}
 
 .chat-toggle{
   position:relative;width:60px;height:60px;border-radius:50%;border:none;cursor:pointer;
@@ -392,7 +395,7 @@ blockquote.pull cite{display:block;margin-top:10px;font-family:"Rubik",sans-seri
 
 .chat-panel{
   position:absolute;bottom:76px;left:0;
-  width:min(360px,calc(100vw - 40px));height:min(520px,calc(100vh - 140px));
+  width:min(360px,calc(100vw - 40px));height:min(520px,var(--chat-panel-max-h, calc(100vh - 140px)));
   background:var(--paper);border-radius:20px;box-shadow:var(--shadow);
   flex-direction:column;overflow:hidden;
 }
@@ -446,7 +449,7 @@ blockquote.pull cite{display:block;margin-top:10px;font-family:"Rubik",sans-seri
 }
 
 @media (max-width:480px){
-  .chat-widget{left:14px;bottom:14px}
+  .chat-widget{left:14px;bottom:calc(14px + var(--kb-offset, 0px))}
   .chat-toggle{width:54px;height:54px}
   .chat-panel,.chat-teaser{left:0}
   .chat-panel{bottom:68px}

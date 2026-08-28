@@ -122,6 +122,21 @@
     var chatGreeted = false;
     var chatSending = false;
 
+    // ב-iOS Safari מיקום fixed לא תמיד נשאר צמוד לתחתית המסך הנראה
+    // כשהמקלדת נפתחת - עוקבים אחרי visualViewport ומזיזים את הווידג'ט
+    // בהתאם, כדי שלא "יקפוץ" מעל התוכן.
+    if (window.visualViewport) {
+      var updateChatViewportOffset = function () {
+        var vv = window.visualViewport;
+        var keyboardInset = Math.max(0, window.innerHeight - vv.height - vv.offsetTop);
+        chatWidget.style.setProperty("--kb-offset", keyboardInset + "px");
+        chatWidget.style.setProperty("--chat-panel-max-h", Math.max(280, vv.height - 96) + "px");
+      };
+      window.visualViewport.addEventListener("resize", updateChatViewportOffset);
+      window.visualViewport.addEventListener("scroll", updateChatViewportOffset);
+      updateChatViewportOffset();
+    }
+
     var getSessionId = function () {
       var key = "alon-chat-session-id";
       var existing = window.sessionStorage ? sessionStorage.getItem(key) : null;

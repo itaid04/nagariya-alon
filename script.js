@@ -73,6 +73,12 @@
     link.addEventListener("click", function (event) {
       var id = link.getAttribute("href");
       if (!id || id.length < 2) return;
+      // בדסקטופ (מ-960px) הטופס והתמונה יושבים זה לצד זה, אז יש מקום
+      // להראות גם את כותרת "יצירת קשר" מעל הטופס; רק במובייל (שם הטופס
+      // מוצג ראשון, לפני התמונה) יש קפיצה ישירה לשדות עצמם
+      if (id === "#lead-panel" && window.matchMedia && window.matchMedia("(min-width: 960px)").matches) {
+        id = "#contact";
+      }
       var target = document.querySelector(id);
       if (!target) return;
       event.preventDefault();

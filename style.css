@@ -414,7 +414,7 @@ blockquote.pull cite{display:block;margin-top:10px;font-family:"Rubik",sans-seri
 .chat-msg{display:flex}
 .chat-msg.user{justify-content:flex-start}
 .chat-msg.bot{justify-content:flex-end}
-.chat-bubble{max-width:80%;padding:10px 14px}
+.chat-bubble{max-width:80%;padding:10px 14px;white-space:pre-wrap}
 .chat-msg.user .chat-bubble{background:var(--walnut);color:var(--paper);border-radius:14px 14px 4px 14px}
 .chat-msg.bot .chat-bubble{background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:14px 14px 14px 4px}
 

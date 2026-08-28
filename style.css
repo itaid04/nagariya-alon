@@ -108,15 +108,31 @@ section{padding:clamp(56px,9vw,96px) 0}
   padding:15px 30px;border:none;cursor:pointer;
   clip-path:polygon(0 0, calc(100% - var(--cut)) 0, 100% var(--cut), 100% 100%, 0 100%);
   font-family:"Rubik",sans-serif;font-weight:700;font-size:15.5px;
-  text-decoration:none;transition:transform .2s ease,box-shadow .2s ease,background-color .2s ease,color .2s ease;
+  text-decoration:none;transition:transform .15s ease,box-shadow .15s ease,background-color .2s ease,color .2s ease;
 }
-.btn-primary{background:var(--walnut);color:var(--paper);box-shadow:var(--shadow-sm)}
-.btn-primary:hover{background:var(--walnut-deep);transform:translateY(-2px)}
-.btn-primary:active{transform:translateY(0)}
-.btn-ghost{background:transparent;color:var(--walnut);border:1.5px solid var(--walnut);clip-path:polygon(0 0, calc(100% - var(--cut) - 1.5px) 0, 100% var(--cut), 100% 100%, 0 100%)}
-.btn-ghost:hover{background:var(--walnut);color:var(--paper)}
-.btn-light{background:var(--card);color:var(--walnut)}
-.btn-light:hover{transform:translateY(-2px)}
+/* depth cue: a hard "carved block" edge below the button plus a soft
+   ambient shadow, so it reads as a raised, pressable wood block
+   rather than a flat colored shape. presses down into its own edge
+   on :active for a tactile click. */
+.btn-primary{
+  background:var(--walnut);color:var(--paper);
+  box-shadow:0 4px 0 var(--walnut-deep), 0 16px 26px -14px rgba(43,32,19,.6);
+}
+.btn-primary:hover{background:var(--walnut-deep);box-shadow:0 5px 0 #1B1008, 0 18px 30px -14px rgba(43,32,19,.65);transform:translateY(-2px)}
+.btn-primary:active{transform:translateY(3px);box-shadow:0 1px 0 var(--walnut-deep), 0 6px 14px -10px rgba(43,32,19,.55)}
+.btn-ghost{
+  background:transparent;color:var(--walnut);border:1.5px solid var(--walnut);
+  clip-path:polygon(0 0, calc(100% - var(--cut) - 1.5px) 0, 100% var(--cut), 100% 100%, 0 100%);
+  box-shadow:0 3px 0 rgba(74,48,24,.28);
+}
+.btn-ghost:hover{background:var(--walnut);color:var(--paper);box-shadow:0 4px 0 var(--walnut-deep);transform:translateY(-2px)}
+.btn-ghost:active{transform:translateY(2px);box-shadow:none}
+.btn-light{
+  background:var(--card);color:var(--walnut);
+  box-shadow:0 4px 0 rgba(0,0,0,.32), 0 16px 24px -14px rgba(0,0,0,.4);
+}
+.btn-light:hover{transform:translateY(-2px);box-shadow:0 5px 0 rgba(0,0,0,.38),0 18px 28px -14px rgba(0,0,0,.45)}
+.btn-light:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(0,0,0,.32),0 6px 14px -10px rgba(0,0,0,.35)}
 .btn-block{width:100%;justify-content:center}
 .tel-link{font-size:15px;font-weight:700;text-decoration:none;color:var(--walnut);border-bottom:1.5px solid currentColor;padding-bottom:2px}
 
@@ -220,7 +236,14 @@ blockquote.pull cite{display:block;margin-top:10px;font-family:"Rubik",sans-seri
 .wood-card-body{padding:20px 22px 24px}
 .wood-card-body h3{font-size:19px}
 .wood-card-body p{margin-top:8px;font-size:14.5px;color:var(--ink-soft);line-height:1.6}
-.materials-note{margin-top:28px;font-size:15px;font-weight:500;color:var(--ink-soft);max-width:64ch}
+.materials-callout{
+  display:flex;align-items:center;gap:16px;
+  background:var(--card);border-inline-start:4px solid var(--walnut);
+  padding:18px 24px;margin-bottom:32px;box-shadow:var(--shadow-sm);
+}
+.materials-callout svg{width:26px;height:26px;color:var(--walnut);flex:none}
+.materials-callout p{font-size:15.5px;font-weight:600;color:var(--ink);line-height:1.5}
+@media (max-width:560px){.materials-callout{padding:16px 18px;gap:12px}}
 @media (max-width:760px){.materials-grid{grid-template-columns:1fr}}
 
 /* ---------- process ---------- */
@@ -327,7 +350,12 @@ blockquote.pull cite{display:block;margin-top:10px;font-family:"Rubik",sans-seri
 .form-success svg{width:46px;height:46px;color:var(--walnut);margin:0 auto 16px}
 .form-success h3{font-size:22px;color:var(--ink)}
 .form-success p{margin-top:8px;color:var(--ink-soft)}
-@media (max-width:960px){.lead-inner{grid-template-columns:1fr}.lead-figure .frame{max-width:300px;margin-inline:auto}.form-panel{padding:26px}}
+@media (max-width:960px){
+  .lead-inner{grid-template-columns:1fr}
+  .form-panel{padding:26px;order:-1}
+  .lead-figure{order:1}
+  .lead-figure .frame{max-width:300px;margin-inline:auto}
+}
 @media (max-width:560px){.form-grid{grid-template-columns:1fr}}
 
 /* ---------- footer ---------- */

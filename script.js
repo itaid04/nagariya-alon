@@ -134,12 +134,26 @@
     };
     var chatSessionId = getSessionId();
 
+    var escapeHtml = function (str) {
+      return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    };
+
+    // מספרי טלפון (ספרות עם מקפים) בתוך טקסט עברי נוטים להישבר באמצע
+    // ולהתהפך חזותית כשהם עוברים שורה, כי מקף נחשב נקודת מעבר שורה
+    // חוקית. עוטפים כל רצף כזה בטווח LTR מבודד שלא נשבר, כמו שכבר
+    // נעשה במיילים של הליד.
+    var isolatePhoneNumbers = function (escaped) {
+      return escaped.replace(/\d[\d-]{5,11}\d/g, function (match) {
+        return '<span dir="ltr" style="unicode-bidi:isolate;white-space:nowrap">' + match + "</span>";
+      });
+    };
+
     var addMessage = function (text, from) {
       var row = document.createElement("div");
       row.className = "chat-msg " + from;
       var bubble = document.createElement("div");
       bubble.className = "chat-bubble";
-      bubble.textContent = text;
+      bubble.innerHTML = isolatePhoneNumbers(escapeHtml(text));
       row.appendChild(bubble);
       chatMessages.appendChild(row);
       chatMessages.scrollTop = chatMessages.scrollHeight;

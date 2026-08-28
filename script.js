@@ -194,7 +194,12 @@
           "bot"
         );
       }
-      chatInput.focus();
+      // מיקוד אוטומטי על השדה פותח את המקלדת מיד עם הפתיחה - בדסקטופ זה
+      // נוח, אבל בנייד זה מתנגש עם הגלילה של ספארי לקראת המקלדת ושובר
+      // את המיקום הקבוע של החלונית. לכן ממקדים אוטומטית רק בדסקטופ.
+      if (window.matchMedia && window.matchMedia("(min-width: 900px)").matches) {
+        chatInput.focus();
+      }
     };
 
     var closeChat = function () {

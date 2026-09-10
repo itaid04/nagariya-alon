@@ -11,9 +11,14 @@
   var gatePassword = document.getElementById("gate-password");
   var gateError = document.getElementById("gate-error");
 
+  var receiptsListLoaded = false;
   var unlock = function () {
     gateSection.hidden = true;
     content.hidden = false;
+    if (!receiptsListLoaded) {
+      receiptsListLoaded = true;
+      loadReceiptsList();
+    }
   };
 
   if (window.sessionStorage && sessionStorage.getItem(SESSION_KEY) === "1") {
@@ -47,6 +52,8 @@
   var POLL_MAX_ATTEMPTS = 60; // עד כ-3 דקות לקבלה אחת
   var MAX_FILES_MOBILE = 4;
 
+  var LIST_URL = "https://itaid04.app.n8n.cloud/webhook/nagariya-alon-receipts-list";
+
   var dropzone = document.getElementById("dropzone");
   var fileInput = document.getElementById("file-input");
   var cameraBtn = document.getElementById("camera-btn");
@@ -56,6 +63,17 @@
   var submitBtn = document.getElementById("upload-submit-btn");
   var clearDoneBtn = document.getElementById("clear-done-btn");
   var statusEl = document.getElementById("admin-status");
+
+  var receiptsListEl = document.getElementById("receipts-list");
+  var receiptsStatusEl = document.getElementById("receipts-status");
+  var receiptsRefreshBtn = document.getElementById("receipts-refresh-btn");
+
+  var resultModalBackdrop = document.getElementById("result-modal-backdrop");
+  var resultModalIcon = document.getElementById("result-modal-icon");
+  var resultModalTitle = document.getElementById("result-modal-title");
+  var resultModalList = document.getElementById("result-modal-list");
+  var resultModalCloseBtn = document.getElementById("result-modal-close-btn");
+  var resultModalCloseX = document.getElementById("result-modal-close-x");
 
   // מסך המצלמה וההגבלה ל-4 קבצים רלוונטיים רק למכשיר מגע (טלפון/טאבלט);
   // בדסקטופ אין סיבה להגביל, ולכפתור מצלמה אין שם משמעות.
@@ -79,9 +97,25 @@
     return entry.status === "uploading" || entry.status === "processing" || entry.status === "saving";
   };
 
+  // אחוז התקדמות מוצג לפי שלב. בשלב הסריקה (הכי ארוך ובלתי-צפוי) האחוז
+  // מתקדם בהדרגה לפי כמות ניסיונות הפולינג שכבר בוצעו. בכישלון/דחייה
+  // האחוז "קופא" במקום שבו נעצר (entry.progress), כדי לא להטעות.
+  var computeProgress = function (entry) {
+    if (entry.status === "pending") return 0;
+    if (entry.status === "uploading") return 12;
+    if (entry.status === "processing") {
+      var attemptsUsed = POLL_MAX_ATTEMPTS - (entry.pollAttemptsLeft != null ? entry.pollAttemptsLeft : POLL_MAX_ATTEMPTS);
+      var frac = Math.min(1, Math.max(0, attemptsUsed / POLL_MAX_ATTEMPTS));
+      return Math.round(25 + frac * 55);
+    }
+    if (entry.status === "saving") return 90;
+    if (entry.status === "done") return 100;
+    return entry.progress || 0;
+  };
+
   var statusLabel = function (entry) {
     if (entry.status === "uploading") return "מעלה...";
-    if (entry.status === "processing") return "בסריקה...";
+    if (entry.status === "processing") return "בסריקה ובזיהוי... " + computeProgress(entry) + "%";
     if (entry.status === "saving") return "שומר...";
     if (entry.status === "done") return "נשמר";
     if (entry.status === "rejected") return entry.message || "לא זוהתה קבלה";
@@ -123,6 +157,15 @@
 
     entry.li.querySelector(".file-item-status-text").textContent = statusLabel(entry);
 
+    var bar = entry.li.querySelector(".file-item-progress");
+    var fill = entry.li.querySelector(".file-item-progress-fill");
+    if (entry.status === "pending") {
+      bar.hidden = true;
+    } else {
+      bar.hidden = false;
+      fill.style.width = computeProgress(entry) + "%";
+    }
+
     var detail = entry.li.querySelector(".file-item-detail");
     if (entry.status === "done" && entry.fields) {
       var parts = [];
@@ -144,6 +187,7 @@
       var li = document.createElement("li");
       li.className = "file-item";
       li.innerHTML =
+        '<div class="file-item-row">' +
         '<span class="file-item-icon"><svg><use href="#i-file"/></svg></span>' +
         '<span class="file-item-main">' +
         '<span class="file-item-name"></span>' +
@@ -151,7 +195,9 @@
         '</span>' +
         '<span class="file-item-status-text"></span>' +
         '<span class="file-item-size"></span>' +
-        '<button type="button" class="file-item-remove" aria-label="הסרת קובץ"><svg><use href="#i-x"/></svg></button>';
+        '<button type="button" class="file-item-remove" aria-label="הסרת קובץ"><svg><use href="#i-x"/></svg></button>' +
+        '</div>' +
+        '<div class="file-item-progress" hidden><div class="file-item-progress-fill"></div></div>';
       li.querySelector(".file-item-name").textContent = entry.file.name;
       li.querySelector(".file-item-size").textContent = formatSize(entry.file.size);
       li.querySelector(".file-item-remove").addEventListener("click", function () {
@@ -252,9 +298,11 @@
   });
 
   var fail = function (entry, message) {
+    entry.progress = computeProgress(entry);
     entry.status = "error";
     entry.message = message;
     render();
+    if (entry._resolveBatch) { entry._resolveBatch(); entry._resolveBatch = null; }
   };
 
   // שלב 3: שמירה בדרייב + שיטס + מייל הצלחה. הקובץ נשלח שוב מהדפדפן,
@@ -284,6 +332,7 @@
         entry.status = "done";
         entry.folder = data && data.folder ? data.folder : null;
         render();
+        if (entry._resolveBatch) { entry._resolveBatch(); entry._resolveBatch = null; }
       })
       .catch(function () {
         fail(entry, "הקבלה נסרקה אבל השמירה נכשלה. נסו שוב.");
@@ -297,6 +346,8 @@
       fail(entry, "הסריקה לקחה יותר מדי זמן. נסו שוב.");
       return;
     }
+    entry.pollAttemptsLeft = attemptsLeft;
+    updateEntryUi(entry);
     window.setTimeout(function () {
       fetch(STATUS_URL, {
         method: "POST",
@@ -323,9 +374,11 @@
             });
             return;
           }
+          entry.progress = computeProgress(entry);
           entry.status = "rejected";
           entry.message = data.message || "המסמך לא זוהה כקבלה.";
           render();
+          if (entry._resolveBatch) { entry._resolveBatch(); entry._resolveBatch = null; }
         })
         .catch(function () {
           fail(entry, "שגיאה בבדיקת הסטטוס. נסו שוב.");
@@ -364,9 +417,153 @@
       return entry.status === "pending" || entry.status === "error";
     });
     if (toUpload.length === 0) return;
+
+    // כל קבלה מקבלת Promise שנפתר כשהיא מגיעה למצב סופי (done/rejected/error).
+    // כשכולן נפתרות - הסבב הזה הסתיים ואפשר להציג פופאפ סיכום.
+    var batchPromises = toUpload.map(function (entry) {
+      return new Promise(function (resolve) {
+        entry._resolveBatch = resolve;
+      });
+    });
+
     // במקביל - כל הקבלות יוצאות יחד, כל אחת עם הפולינג שלה
     toUpload.forEach(uploadEntry);
+
+    Promise.all(batchPromises).then(function () {
+      showResultModal(toUpload);
+      loadReceiptsList();
+    });
   });
+
+  // ---------- פופאפ תוצאת העלאה ----------
+  function showResultModal(finishedEntries) {
+    var doneList = finishedEntries.filter(function (e) { return e.status === "done"; });
+    var okAll = finishedEntries.every(function (e) { return e.status === "done"; });
+
+    resultModalIcon.className = "modal-icon " + (okAll ? "is-success" : "is-warning");
+    resultModalIcon.innerHTML = okAll ?
+      '<svg><use href="#i-check"/></svg>' :
+      '<svg><use href="#i-alert"/></svg>';
+
+    if (okAll) {
+      resultModalTitle.textContent = doneList.length === 1 ? "הקבלה נשמרה בהצלחה!" : doneList.length + " קבלות נשמרו בהצלחה!";
+    } else if (doneList.length === 0) {
+      resultModalTitle.textContent = finishedEntries.length === 1 ? "ההעלאה לא הצליחה" : "ההעלאות לא הצליחו";
+    } else {
+      resultModalTitle.textContent = "נשמרו " + doneList.length + " מתוך " + finishedEntries.length + " קבלות";
+    }
+
+    resultModalList.innerHTML = "";
+    finishedEntries.forEach(function (entry) {
+      var li = document.createElement("li");
+      li.className = "modal-result-item is-" + entry.status;
+      var iconHref = entry.status === "done" ? "#i-check" : entry.status === "rejected" ? "#i-alert" : "#i-x";
+      li.innerHTML =
+        '<span class="modal-result-icon"><svg><use href="' + iconHref + '"/></svg></span>' +
+        '<span class="modal-result-text">' +
+        '<span class="modal-result-name"></span>' +
+        '<span class="modal-result-detail"></span>' +
+        '</span>';
+      li.querySelector(".modal-result-name").textContent = entry.file.name;
+
+      var detailText;
+      if (entry.status === "done") {
+        var parts = [];
+        if (entry.fields && entry.fields.supplier) parts.push(entry.fields.supplier);
+        if (entry.fields && entry.fields.amount_after_vat) parts.push(entry.fields.amount_after_vat + ' ש"ח');
+        detailText = parts.length > 0 ? parts.join(" · ") : "נשמר בהצלחה";
+      } else {
+        detailText = entry.message || (entry.status === "rejected" ? "לא זוהתה קבלה" : "נכשל");
+      }
+      li.querySelector(".modal-result-detail").textContent = detailText;
+      resultModalList.appendChild(li);
+    });
+
+    resultModalBackdrop.hidden = false;
+  }
+
+  function hideResultModal() {
+    resultModalBackdrop.hidden = true;
+  }
+
+  resultModalCloseBtn.addEventListener("click", hideResultModal);
+  resultModalCloseX.addEventListener("click", hideResultModal);
+  resultModalBackdrop.addEventListener("click", function (event) {
+    if (event.target === resultModalBackdrop) hideResultModal();
+  });
+  document.addEventListener("keydown", function (event) {
+    if (event.key === "Escape" && !resultModalBackdrop.hidden) hideResultModal();
+  });
+
+  // ---------- קבלות שהועלו (נקרא מהגיליון "קבלות" בפועל, לא מיומן הסריקות) ----------
+  function loadReceiptsList() {
+    receiptsRefreshBtn.disabled = true;
+    receiptsRefreshBtn.classList.add("is-loading");
+    receiptsStatusEl.hidden = false;
+    receiptsStatusEl.textContent = "טוען קבלות...";
+    receiptsStatusEl.classList.remove("is-error");
+
+    fetch(LIST_URL)
+      .then(function (res) {
+        if (!res.ok) throw new Error("list webhook responded with " + res.status);
+        return res.json();
+      })
+      .then(function (data) {
+        renderReceiptsList((data && data.receipts) || []);
+      })
+      .catch(function () {
+        receiptsListEl.innerHTML = "";
+        receiptsStatusEl.hidden = false;
+        receiptsStatusEl.textContent = "לא הצלחנו לטעון את רשימת הקבלות. אפשר לנסות לרענן.";
+        receiptsStatusEl.classList.add("is-error");
+      })
+      .then(function () {
+        receiptsRefreshBtn.disabled = false;
+        receiptsRefreshBtn.classList.remove("is-loading");
+      });
+  }
+
+  function renderReceiptsList(receipts) {
+    receiptsListEl.innerHTML = "";
+    if (receipts.length === 0) {
+      receiptsStatusEl.hidden = false;
+      receiptsStatusEl.textContent = "עדיין לא הועלו קבלות.";
+      receiptsStatusEl.classList.remove("is-error");
+      return;
+    }
+    receiptsStatusEl.hidden = true;
+    receipts.forEach(function (r) {
+      receiptsListEl.appendChild(buildReceiptCard(r));
+    });
+  }
+
+  function buildReceiptCard(r) {
+    var li = document.createElement("li");
+    li.className = "receipt-card";
+    li.innerHTML =
+      '<div class="receipt-card-head">' +
+      '<span class="receipt-card-supplier"></span>' +
+      '<span class="receipt-card-amount"></span>' +
+      '</div>' +
+      '<div class="receipt-card-grid">' +
+      '<div class="receipt-field"><span class="receipt-label">תאריך</span><span class="receipt-value rv-date"></span></div>' +
+      '<div class="receipt-field"><span class="receipt-label">מס\' חשבונית</span><span class="receipt-value rv-invoice"></span></div>' +
+      '<div class="receipt-field"><span class="receipt-label">לפני מע״מ</span><span class="receipt-value rv-before"></span></div>' +
+      '<div class="receipt-field"><span class="receipt-label">סוג שירות</span><span class="receipt-value rv-service"></span></div>' +
+      '</div>' +
+      '<div class="receipt-card-foot">הועלה <span class="rv-uploaded"></span></div>';
+
+    li.querySelector(".receipt-card-supplier").textContent = r.supplier || "ספק לא ידוע";
+    li.querySelector(".receipt-card-amount").textContent = r.amountAfterVat ? (r.amountAfterVat + ' ש"ח') : "";
+    li.querySelector(".rv-date").textContent = r.date || "—";
+    li.querySelector(".rv-invoice").textContent = r.invoiceNumber || "—";
+    li.querySelector(".rv-before").textContent = r.amountBeforeVat ? (r.amountBeforeVat + ' ש"ח') : "—";
+    li.querySelector(".rv-service").textContent = r.serviceType || "—";
+    li.querySelector(".rv-uploaded").textContent = r.uploadedAt || "";
+    return li;
+  }
+
+  receiptsRefreshBtn.addEventListener("click", loadReceiptsList);
 
   render();
 })();

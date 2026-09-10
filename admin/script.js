@@ -68,6 +68,10 @@
   var receiptsStatusEl = document.getElementById("receipts-status");
   var receiptsRefreshBtn = document.getElementById("receipts-refresh-btn");
   var receiptsMonthlyTotalEl = document.getElementById("receipts-monthly-total");
+  var receiptsMonthsEl = document.getElementById("receipts-months");
+
+  var HEBREW_MONTHS = ["ינואר", "פברואר", "מרץ", "אפריל", "מאי", "יוני", "יולי", "אוגוסט", "ספטמבר", "אוקטובר", "נובמבר", "דצמבר"];
+  var selectedMonth = null;
 
   var resultModalBackdrop = document.getElementById("result-modal-backdrop");
   var resultModalIcon = document.getElementById("result-modal-icon");
@@ -172,7 +176,7 @@
       var parts = [];
       if (entry.fields.supplier) parts.push(entry.fields.supplier);
       if (entry.fields.amount_after_vat) parts.push(entry.fields.amount_after_vat + " ש\"ח");
-      if (entry.folder) parts.push("תיקייה " + entry.folder);
+      if (entry.monthTab) parts.push("טאב " + entry.monthTab);
       detail.textContent = parts.join(" · ");
       detail.hidden = parts.length === 0;
     } else {
@@ -241,7 +245,7 @@
     }
 
     incoming.forEach(function (file) {
-      entries.push({ file: file, status: "pending", message: null, fields: null, folder: null, li: null });
+      entries.push({ file: file, status: "pending", message: null, fields: null, monthTab: null, li: null });
     });
     render();
 
@@ -314,7 +318,6 @@
     render();
 
     var formData = new FormData();
-    formData.append("document", entry.file, entry.file.name);
     formData.append("fileName", entry.file.name);
     formData.append("supplier", fields.supplier || "");
     formData.append("date", fields.date || "");
@@ -331,7 +334,7 @@
       .then(function (data) {
         if (data && data.ok === false) throw new Error("finalize reported failure");
         entry.status = "done";
-        entry.folder = data && data.folder ? data.folder : null;
+        entry.monthTab = data && data.monthTab ? data.monthTab : null;
         render();
         if (entry._resolveBatch) { entry._resolveBatch(); entry._resolveBatch = null; }
       })
@@ -524,17 +527,65 @@
       });
   }
 
+  // מקבץ קבלות לפי חודש-שנה (dateIso, לא תאריך ההעלאה), בסדר שבו הן כבר
+  // ממוינות (מהחדש לישן) - כך שסדר החודשים בכפתורים יוצא נכון בלי מיון נוסף.
+  function groupReceiptsByMonth(receipts) {
+    var order = [];
+    var map = {};
+    receipts.forEach(function (r) {
+      var ym = (r.dateIso || "").slice(0, 7);
+      if (!ym) return;
+      if (!map[ym]) {
+        map[ym] = [];
+        order.push(ym);
+      }
+      map[ym].push(r);
+    });
+    return { order: order, map: map };
+  }
+
+  function monthLabel(ym) {
+    var parts = ym.split("-");
+    var monthIndex = parseInt(parts[1], 10) - 1;
+    var name = HEBREW_MONTHS[monthIndex] || parts[1];
+    return name + " " + parts[0];
+  }
+
   function renderReceiptsList(receipts) {
-    receiptsListEl.innerHTML = "";
     updateMonthlyTotal(receipts);
+
     if (receipts.length === 0) {
+      receiptsMonthsEl.hidden = true;
+      receiptsMonthsEl.innerHTML = "";
+      receiptsListEl.innerHTML = "";
       receiptsStatusEl.hidden = false;
       receiptsStatusEl.textContent = "עדיין לא הועלו קבלות.";
       receiptsStatusEl.classList.remove("is-error");
       return;
     }
     receiptsStatusEl.hidden = true;
-    receipts.forEach(function (r) {
+
+    var grouped = groupReceiptsByMonth(receipts);
+    if (!selectedMonth || grouped.order.indexOf(selectedMonth) === -1) {
+      selectedMonth = grouped.order[0];
+    }
+
+    receiptsMonthsEl.hidden = false;
+    receiptsMonthsEl.innerHTML = "";
+    grouped.order.forEach(function (ym) {
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "month-btn" + (ym === selectedMonth ? " is-active" : "");
+      btn.textContent = monthLabel(ym) + " (" + grouped.map[ym].length + ")";
+      btn.addEventListener("click", function () {
+        selectedMonth = ym;
+        renderReceiptsList(receipts);
+      });
+      receiptsMonthsEl.appendChild(btn);
+    });
+
+    receiptsListEl.innerHTML = "";
+    (grouped.map[selectedMonth] || []).forEach(function (r) {
       receiptsListEl.appendChild(buildReceiptCard(r));
     });
   }

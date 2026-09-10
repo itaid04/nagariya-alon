@@ -2,7 +2,7 @@
   // הגנת סיסמה בצד לקוח בלבד - חוסם גולש מקרי, לא אבטחה אמיתית (הסיסמה
   // גלויה בקוד המקור). מספיק לשלב הפיתוח; לפני שקבלות אמיתיות עולות כאן
   // צריך הגנה אמיתית בצד שרת.
-  var ADMIN_PASSWORD = "nagariya2026";
+  var ADMIN_PASSWORD = "Zohar";
   var SESSION_KEY = "alon-admin-unlocked";
 
   var gateSection = document.getElementById("admin-gate-section");

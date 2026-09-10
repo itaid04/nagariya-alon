@@ -3,6 +3,22 @@
    ממשק ראשוני בלבד: עוד נעצב ונתאים אחרי שהבאקאנד יהיה מוכן.
    ============================================================ */
 
+.admin-gate-section{padding:140px 0;min-height:60vh;display:flex;align-items:center}
+.gate-panel{
+  max-width:380px;margin:0 auto;text-align:center;
+  background:var(--card);padding:36px 32px;box-shadow:var(--shadow-sm);
+}
+.gate-icon{width:30px;height:30px;color:var(--walnut);margin:0 auto 14px}
+.gate-title{font-size:24px}
+.gate-panel .lede{margin-top:10px;font-size:15px}
+.gate-form{margin-top:24px;display:flex;flex-direction:column;gap:14px}
+.gate-form input{
+  font-family:"Rubik",sans-serif;font-size:15px;padding:13px 15px;
+  border:1.5px solid var(--line);background:#fff;color:var(--ink);text-align:center;
+}
+.gate-form input:focus{border-color:var(--walnut);outline:none}
+.gate-error{color:#8a3320}
+
 .admin-hero{padding:140px 0 20px}
 .admin-hero h1{font-size:clamp(30px,4vw,42px);margin-top:6px}
 .admin-hero .lede{margin-top:14px;font-size:16.5px;color:var(--ink-soft);max-width:560px;line-height:1.7}

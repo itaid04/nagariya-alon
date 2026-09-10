@@ -23,6 +23,9 @@
   <symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
     <path d="M6 6l12 12M18 6L6 18"/>
   </symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
+    <rect x="5" y="11" width="14" height="10" rx="1.5"/><path d="M8 11V7a4 4 0 018 0v4"/>
+  </symbol>
 </svg>
 
 <nav class="nav">
@@ -38,31 +41,48 @@
 </nav>
 
 <main id="main">
-  <section class="admin-hero">
+  <section class="admin-gate-section" id="admin-gate-section">
     <div class="wrap">
-      <div class="eyebrow"><svg><use href="#i-file"/></svg> אזור ניהול</div>
-      <h1>פאנל קבלות</h1>
-      <p class="lede">כאן תוכל להעלות קבלות מהעסק. בשלב הזה זה רק ממשק ראשוני — עוד נתאים את העיצוב ונחבר את זה לתהליך שמעבד את הקבלות.</p>
-    </div>
-  </section>
-
-  <section class="admin-upload-section">
-    <div class="wrap">
-      <div class="upload-panel">
-        <div class="dropzone" id="dropzone" tabindex="0" role="button" aria-label="העלאת קבלות: גררו קבצים לכאן או לחצו לבחירה">
-          <svg><use href="#i-upload"/></svg>
-          <p class="dropzone-title">גררו קבצים לכאן</p>
-          <p class="dropzone-sub">או לחצו לבחירת קבצים מהמחשב — תמונות או PDF</p>
-          <input type="file" id="file-input" accept="image/*,.pdf" multiple hidden>
-        </div>
-
-        <ul class="file-list" id="file-list"></ul>
-
-        <button type="button" class="btn btn-primary btn-block" id="upload-submit-btn" disabled>העלאת קבלות</button>
-        <p class="admin-note" id="admin-status">בחרו קובץ אחד לפחות כדי להמשיך.</p>
+      <div class="gate-panel">
+        <svg class="gate-icon"><use href="#i-lock"/></svg>
+        <h1 class="gate-title">אזור מוגן</h1>
+        <p class="lede">האזור הזה מיועד לאלון בלבד. הזינו סיסמה כדי להמשיך.</p>
+        <form id="gate-form" class="gate-form">
+          <input type="password" id="gate-password" placeholder="סיסמה" autocomplete="current-password" required>
+          <button type="submit" class="btn btn-primary btn-block">כניסה</button>
+          <p class="admin-note gate-error" id="gate-error" hidden>סיסמה שגויה, נסו שוב.</p>
+        </form>
       </div>
     </div>
   </section>
+
+  <div id="admin-content" hidden>
+    <section class="admin-hero">
+      <div class="wrap">
+        <div class="eyebrow"><svg><use href="#i-file"/></svg> אזור ניהול</div>
+        <h1>פאנל קבלות</h1>
+        <p class="lede">כאן תוכל להעלות קבלות מהעסק. בשלב הזה זה רק ממשק ראשוני — עוד נתאים את העיצוב ונחבר את זה לתהליך שמעבד את הקבלות.</p>
+      </div>
+    </section>
+
+    <section class="admin-upload-section">
+      <div class="wrap">
+        <div class="upload-panel">
+          <div class="dropzone" id="dropzone" tabindex="0" role="button" aria-label="העלאת קבלות: גררו קבצים לכאן או לחצו לבחירה">
+            <svg><use href="#i-upload"/></svg>
+            <p class="dropzone-title">גררו קבצים לכאן</p>
+            <p class="dropzone-sub">או לחצו לבחירת קבצים מהמחשב — תמונות או PDF</p>
+            <input type="file" id="file-input" accept="image/*,.pdf" multiple hidden>
+          </div>
+
+          <ul class="file-list" id="file-list"></ul>
+
+          <button type="button" class="btn btn-primary btn-block" id="upload-submit-btn" disabled>העלאת קבלות</button>
+          <p class="admin-note" id="admin-status">בחרו קובץ אחד לפחות כדי להמשיך.</p>
+        </div>
+      </div>
+    </section>
+  </div>
 </main>
 
 <script src="script.js"></script>

@@ -1,4 +1,38 @@
 (function () {
+  // הגנת סיסמה בצד לקוח בלבד - חוסם גולש מקרי, לא אבטחה אמיתית (הסיסמה
+  // גלויה בקוד המקור). מספיק לשלב הפיתוח; לפני שקבלות אמיתיות עולות כאן
+  // צריך הגנה אמיתית בצד שרת.
+  var ADMIN_PASSWORD = "nagariya2026";
+  var SESSION_KEY = "alon-admin-unlocked";
+
+  var gateSection = document.getElementById("admin-gate-section");
+  var content = document.getElementById("admin-content");
+  var gateForm = document.getElementById("gate-form");
+  var gatePassword = document.getElementById("gate-password");
+  var gateError = document.getElementById("gate-error");
+
+  var unlock = function () {
+    gateSection.hidden = true;
+    content.hidden = false;
+  };
+
+  if (window.sessionStorage && sessionStorage.getItem(SESSION_KEY) === "1") {
+    unlock();
+  }
+
+  gateForm.addEventListener("submit", function (event) {
+    event.preventDefault();
+    if (gatePassword.value === ADMIN_PASSWORD) {
+      if (window.sessionStorage) sessionStorage.setItem(SESSION_KEY, "1");
+      gateError.hidden = true;
+      unlock();
+    } else {
+      gateError.hidden = false;
+      gatePassword.value = "";
+      gatePassword.focus();
+    }
+  });
+
   var dropzone = document.getElementById("dropzone");
   var fileInput = document.getElementById("file-input");
   var fileList = document.getElementById("file-list");

@@ -48,8 +48,8 @@
   var SUBMIT_URL = "https://itaid04.app.n8n.cloud/webhook/nagariya-alon-receipt-submit";
   var STATUS_URL = "https://itaid04.app.n8n.cloud/webhook/nagariya-alon-receipt-status";
   var FINALIZE_URL = "https://itaid04.app.n8n.cloud/webhook/nagariya-alon-receipt-finalize";
-  var POLL_INTERVAL_MS = 3000;
-  var POLL_MAX_ATTEMPTS = 60; // עד כ-3 דקות לקבלה אחת
+  var POLL_INTERVAL_MS = 5000;
+  var POLL_MAX_ATTEMPTS = 36; // עד כ-3 דקות לקבלה אחת
   var MAX_FILES_MOBILE = 4;
 
   var LIST_URL = "https://itaid04.app.n8n.cloud/webhook/nagariya-alon-receipts-list";

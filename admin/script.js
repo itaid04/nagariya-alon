@@ -67,6 +67,7 @@
   var receiptsListEl = document.getElementById("receipts-list");
   var receiptsStatusEl = document.getElementById("receipts-status");
   var receiptsRefreshBtn = document.getElementById("receipts-refresh-btn");
+  var receiptsMonthlyTotalEl = document.getElementById("receipts-monthly-total");
 
   var resultModalBackdrop = document.getElementById("result-modal-backdrop");
   var resultModalIcon = document.getElementById("result-modal-icon");
@@ -525,6 +526,7 @@
 
   function renderReceiptsList(receipts) {
     receiptsListEl.innerHTML = "";
+    updateMonthlyTotal(receipts);
     if (receipts.length === 0) {
       receiptsStatusEl.hidden = false;
       receiptsStatusEl.textContent = "עדיין לא הועלו קבלות.";
@@ -535,6 +537,38 @@
     receipts.forEach(function (r) {
       receiptsListEl.appendChild(buildReceiptCard(r));
     });
+  }
+
+  // סה"כ לפי תאריך הקבלה בפועל (dateIso), לא לפי תאריך ההעלאה - כדי
+  // שההוצאות ישתייכו לחודש שבו הן נוצרו, כמו שרואה חשבון היה מצפה.
+  function currentYearMonth() {
+    var now = new Date();
+    var mm = String(now.getMonth() + 1);
+    if (mm.length < 2) mm = "0" + mm;
+    return now.getFullYear() + "-" + mm;
+  }
+
+  function updateMonthlyTotal(receipts) {
+    var ym = currentYearMonth();
+    var sum = 0;
+    var count = 0;
+    receipts.forEach(function (r) {
+      if (r.dateIso && r.dateIso.slice(0, 7) === ym) {
+        var n = parseFloat(r.amountAfterVat);
+        if (!isNaN(n)) {
+          sum += n;
+          count += 1;
+        }
+      }
+    });
+    if (count === 0) {
+      receiptsMonthlyTotalEl.hidden = true;
+      return;
+    }
+    var sumText = sum.toLocaleString("he-IL", { maximumFractionDigits: 2 });
+    receiptsMonthlyTotalEl.hidden = false;
+    receiptsMonthlyTotalEl.innerHTML =
+      'סה"כ החודש: <b>' + sumText + ' ש"ח</b> (' + count + (count === 1 ? " קבלה" : " קבלות") + ")";
   }
 
   function buildReceiptCard(r) {

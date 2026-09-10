@@ -1,0 +1,195 @@
+/* ============================================================
+   פאנל ניהול — קבלות
+   ממשק ראשוני בלבד: עוד נעצב ונתאים אחרי שהבאקאנד יהיה מוכן.
+   ============================================================ */
+
+#admin-content[hidden],#admin-gate-section[hidden]{display:none!important}
+
+.admin-gate-section{padding:140px 0;min-height:60vh;display:flex;align-items:center}
+.gate-panel{
+  max-width:380px;margin:0 auto;text-align:center;
+  background:var(--card);padding:36px 32px;box-shadow:var(--shadow-sm);
+}
+.gate-icon{width:30px;height:30px;color:var(--walnut);margin:0 auto 14px}
+.gate-title{font-size:24px}
+.gate-panel .lede{margin-top:10px;font-size:15px}
+.gate-form{margin-top:24px;display:flex;flex-direction:column;gap:14px}
+.gate-form input{
+  font-family:"Rubik",sans-serif;font-size:15px;padding:13px 15px;
+  border:1.5px solid var(--line);background:#fff;color:var(--ink);text-align:center;
+}
+.gate-form input:focus{border-color:var(--walnut);outline:none}
+.gate-error{color:#8a3320}
+
+.admin-hero{padding:140px 0 20px}
+.admin-hero h1{font-size:clamp(30px,4vw,42px);margin-top:6px}
+.admin-hero .lede{margin-top:14px;font-size:16.5px;color:var(--ink-soft);max-width:560px;line-height:1.7}
+
+.admin-upload-section{padding:24px 0 80px}
+.upload-panel{
+  max-width:640px;margin:0 auto;
+  background:var(--card);padding:32px;box-shadow:var(--shadow-sm);
+}
+
+/* .btn קובע display:inline-flex, שדורס את התנהגות [hidden] של הדפדפן -
+   בלי הכלל הזה כפתור המצלמה מופיע גם בדסקטופ */
+.camera-btn[hidden]{display:none!important}
+.camera-btn{margin:0 0 16px}
+.camera-btn svg{width:20px;height:20px;flex:none}
+
+.mobile-hint{
+  display:flex;align-items:flex-start;gap:8px;margin-top:14px;
+  font-size:12.5px;color:var(--ink-soft);line-height:1.5;
+}
+.mobile-hint[hidden]{display:none}
+.mobile-hint svg{width:15px;height:15px;color:var(--walnut);flex:none;margin-top:2px}
+
+.dropzone{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+  text-align:center;padding:44px 24px;cursor:pointer;
+  border:1.5px dashed var(--line);background:var(--paper);
+  transition:border-color .2s ease,background-color .2s ease;
+}
+.dropzone svg{width:30px;height:30px;color:var(--walnut);margin-bottom:6px}
+.dropzone-title{font-family:"Frank Ruhl Libre",serif;font-size:18px;color:var(--ink)}
+.dropzone-sub{font-size:13.5px;color:var(--ink-soft)}
+.dropzone:hover,.dropzone:focus-visible{border-color:var(--walnut);background:var(--paper-deep)}
+.dropzone.is-dragover{border-color:var(--walnut);background:var(--paper-deep)}
+
+.file-list{margin-top:18px}
+.file-list:not(:empty){margin-bottom:4px}
+.file-item{padding:12px 4px;border-bottom:1px solid var(--line)}
+.file-item-row{display:flex;align-items:center;gap:12px}
+.file-item svg{width:18px;height:18px;color:var(--walnut);flex:none}
+.file-item-icon{display:flex;align-items:center;justify-content:center;width:18px;height:18px;flex:none}
+.file-item[data-status="done"] .file-item-icon{color:#3f8f5f}
+.file-item[data-status="error"] .file-item-icon,.file-item[data-status="error"] .file-item-status-text{color:#8a3320}
+.file-item[data-status="rejected"] .file-item-icon,.file-item[data-status="rejected"] .file-item-status-text{color:#9a6212}
+.file-item[data-status="timeout"] .file-item-icon,.file-item[data-status="timeout"] .file-item-status-text{color:#5c6b73}
+.file-item-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.file-item-detail{font-size:12px;color:var(--ink-soft);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.file-item-detail[hidden]{display:none}
+.file-item-spinner{
+  width:15px;height:15px;border-radius:50%;
+  border:2px solid var(--line);border-top-color:var(--walnut);
+  display:block;animation:spin .8s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.file-item-name{min-width:0;font-size:14.5px;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.file-item-status-text{font-size:12.5px;color:var(--ink-soft);flex:none;max-width:45%;text-align:end}
+.file-item-size{font-size:12.5px;color:var(--ink-soft);flex:none}
+.file-item-remove{
+  background:none;border:none;cursor:pointer;color:var(--ink-soft);flex:none;
+  display:flex;align-items:center;justify-content:center;padding:4px;
+}
+.file-item-remove[hidden]{display:none}
+.file-item-remove svg{width:15px;height:15px}
+.file-item-remove:hover{color:var(--walnut)}
+
+.file-item-progress{height:4px;border-radius:2px;background:var(--line);overflow:hidden;margin-top:8px}
+.file-item-progress[hidden]{display:none}
+.file-item-progress-fill{height:100%;width:0%;background:var(--walnut);border-radius:2px;transition:width .35s ease}
+.file-item[data-status="done"] .file-item-progress-fill{background:#3f8f5f}
+.file-item[data-status="rejected"] .file-item-progress-fill{background:#9a6212}
+.file-item[data-status="error"] .file-item-progress-fill{background:#8a3320}
+.file-item[data-status="timeout"] .file-item-progress-fill{background:#5c6b73}
+.file-item[data-status="uploading"] .file-item-progress-fill,
+.file-item[data-status="processing"] .file-item-progress-fill,
+.file-item[data-status="saving"] .file-item-progress-fill{
+  background-image:linear-gradient(135deg, rgba(255,255,255,.4) 25%, transparent 25%, transparent 50%, rgba(255,255,255,.4) 50%, rgba(255,255,255,.4) 75%, transparent 75%, transparent);
+  background-size:14px 14px;
+  animation:file-progress-stripes .9s linear infinite;
+}
+@keyframes file-progress-stripes{from{background-position:0 0}to{background-position:14px 0}}
+
+.upload-panel #upload-submit-btn{margin-top:22px}
+.upload-panel .btn[disabled]{opacity:.5;cursor:not-allowed}
+.clear-done-btn{
+  display:block;margin:12px auto 0;background:none;border:none;cursor:pointer;
+  font-size:12.5px;color:var(--ink-soft);text-decoration:underline;padding:4px;
+}
+.clear-done-btn[hidden]{display:none}
+.clear-done-btn:hover{color:var(--walnut)}
+.admin-note{margin-top:12px;font-size:12.5px;color:var(--ink-soft);text-align:center}
+.admin-note.is-error{color:#8a3320}
+
+@media (max-width:560px){.upload-panel{padding:24px}}
+
+/* ---------- קבלות שהועלו ---------- */
+.admin-receipts-section{padding:24px 0 90px}
+.receipts-panel{max-width:640px;margin:0 auto;background:var(--card);padding:32px;box-shadow:var(--shadow-sm)}
+.receipts-panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.receipts-panel-head h2{font-size:19px;font-family:"Frank Ruhl Libre",serif}
+.receipts-refresh-btn{
+  background:none;border:none;cursor:pointer;color:var(--ink-soft);flex:none;
+  display:flex;align-items:center;justify-content:center;padding:6px;
+}
+.receipts-refresh-btn:hover{color:var(--walnut)}
+.receipts-refresh-btn:disabled{opacity:.4;cursor:default}
+.receipts-refresh-btn svg{width:17px;height:17px}
+.receipts-refresh-btn.is-loading svg{animation:spin .8s linear infinite}
+.receipts-monthly-total{
+  margin-top:10px;padding:11px 16px;background:var(--paper-deep);
+  font-size:14px;color:var(--ink);
+}
+.receipts-monthly-total[hidden]{display:none}
+.receipts-monthly-total b{color:var(--walnut);font-weight:700}
+.receipts-months{margin-top:14px;display:flex;flex-wrap:wrap;gap:8px}
+.receipts-months[hidden]{display:none}
+.month-btn{
+  font-family:"Rubik",sans-serif;font-size:12.5px;color:var(--ink-soft);
+  background:var(--paper);border:1px solid var(--line);padding:7px 14px;
+  cursor:pointer;transition:border-color .15s ease,color .15s ease,background-color .15s ease;
+}
+.month-btn:hover{border-color:var(--walnut);color:var(--ink)}
+.month-btn.is-active{background:var(--walnut);border-color:var(--walnut);color:#fff}
+.receipts-list{margin-top:14px;display:flex;flex-direction:column;gap:12px;list-style:none;padding:0}
+.receipt-card{border:1px solid var(--line);padding:14px 16px;background:var(--paper)}
+.receipt-card-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:8px}
+.receipt-card-supplier{font-family:"Frank Ruhl Libre",serif;font-size:16px;color:var(--ink)}
+.receipt-card-amount{font-size:15px;font-weight:600;color:var(--walnut);flex:none;white-space:nowrap}
+.receipt-card-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px 16px}
+.receipt-field{display:flex;flex-direction:column;gap:1px;min-width:0}
+.receipt-label{font-size:11px;color:var(--ink-soft)}
+.receipt-value{font-size:13.5px;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rv-date,.rv-invoice,.rv-uploaded{direction:ltr;unicode-bidi:isolate;display:inline-block}
+.receipt-card-foot{margin-top:10px;font-size:11.5px;color:var(--ink-soft)}
+@media (max-width:560px){.receipts-panel{padding:24px}}
+
+/* ---------- פופאפ תוצאת העלאה ---------- */
+.modal-backdrop{
+  position:fixed;inset:0;background:rgba(43,32,19,.55);
+  display:flex;align-items:center;justify-content:center;padding:20px;z-index:80;
+}
+.modal-backdrop[hidden]{display:none}
+.modal-panel{
+  position:relative;max-width:440px;width:100%;max-height:85vh;overflow-y:auto;
+  background:var(--card);padding:34px 28px 28px;box-shadow:var(--shadow-sm);text-align:center;
+}
+.modal-close-x{
+  position:absolute;top:14px;left:14px;background:none;border:none;cursor:pointer;
+  color:var(--ink-soft);display:flex;align-items:center;justify-content:center;padding:6px;
+}
+.modal-close-x svg{width:16px;height:16px}
+.modal-close-x:hover{color:var(--walnut)}
+.modal-icon{width:46px;height:46px;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;border-radius:50%}
+.modal-icon svg{width:24px;height:24px}
+.modal-icon.is-success{background:#e4f2e9;color:#3f8f5f}
+.modal-icon.is-warning{background:#fbeee0;color:#9a6212}
+.modal-panel h2{font-size:21px;font-family:"Frank Ruhl Libre",serif}
+.modal-result-list{margin:18px 0 22px;text-align:right;list-style:none;padding:0}
+.modal-result-item{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid var(--line)}
+.modal-result-item:last-child{border-bottom:none}
+.modal-result-icon{width:17px;height:17px;flex:none;margin-top:2px}
+.modal-result-icon svg{width:17px;height:17px;display:block}
+.modal-result-item.is-done .modal-result-icon{color:#3f8f5f}
+.modal-result-item.is-rejected .modal-result-icon{color:#9a6212}
+.modal-result-item.is-error .modal-result-icon{color:#8a3320}
+.modal-result-item.is-timeout .modal-result-icon{color:#5c6b73}
+.modal-result-text{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1}
+.modal-result-name{font-size:14px;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.modal-result-detail{font-size:12.5px;color:var(--ink-soft)}
+.modal-result-fields{display:grid;grid-template-columns:repeat(2,1fr);gap:4px 14px;margin-top:6px}
+.mrf-label{font-size:10.5px;color:var(--ink-soft);display:block}
+.mrf-value{font-size:12.5px;color:var(--ink)}
+.mrf-value.ltr{direction:ltr;unicode-bidi:isolate;display:inline-block}

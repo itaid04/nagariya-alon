@@ -50,17 +50,29 @@
   padding:12px 4px;border-bottom:1px solid var(--line);
 }
 .file-item svg{width:18px;height:18px;color:var(--walnut);flex:none}
+.file-item-icon{display:flex;align-items:center;justify-content:center;width:18px;height:18px;flex:none}
+.file-item[data-status="done"] .file-item-icon{color:#3f8f5f}
+.file-item[data-status="error"] .file-item-icon,.file-item[data-status="error"] .file-item-status-text{color:#8a3320}
+.file-item-spinner{
+  width:15px;height:15px;border-radius:50%;
+  border:2px solid var(--line);border-top-color:var(--walnut);
+  display:block;animation:spin .8s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
 .file-item-name{flex:1;min-width:0;font-size:14.5px;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.file-item-status-text{font-size:12.5px;color:var(--ink-soft);flex:none}
 .file-item-size{font-size:12.5px;color:var(--ink-soft);flex:none}
 .file-item-remove{
   background:none;border:none;cursor:pointer;color:var(--ink-soft);flex:none;
   display:flex;align-items:center;justify-content:center;padding:4px;
 }
+.file-item-remove[hidden]{display:none}
 .file-item-remove svg{width:15px;height:15px}
 .file-item-remove:hover{color:var(--walnut)}
 
 .upload-panel .btn{margin-top:22px}
 .upload-panel .btn[disabled]{opacity:.5;cursor:not-allowed}
 .admin-note{margin-top:12px;font-size:12.5px;color:var(--ink-soft);text-align:center}
+.admin-note.is-error{color:#8a3320}
 
 @media (max-width:560px){.upload-panel{padding:24px}}

@@ -125,6 +125,7 @@
     if (entry.status === "done") return "נשמר";
     if (entry.status === "rejected") return entry.message || "לא זוהתה קבלה";
     if (entry.status === "error") return entry.message || "נכשל";
+    if (entry.status === "timeout") return entry.message || "לא הסתיים בזמן";
     return "";
   };
 
@@ -135,7 +136,7 @@
     entries.forEach(function (entry) {
       if (entry.status === "pending") pendingCount += 1;
       else if (entry.status === "done") doneCount += 1;
-      else if (entry.status === "rejected" || entry.status === "error") failedCount += 1;
+      else if (entry.status === "rejected" || entry.status === "error" || entry.status === "timeout") failedCount += 1;
       else activeCount += 1;
     });
 
@@ -158,6 +159,7 @@
       entry.status === "done" ? '<svg><use href="#i-check"/></svg>' :
       entry.status === "rejected" ? '<svg><use href="#i-alert"/></svg>' :
       entry.status === "error" ? '<svg><use href="#i-x"/></svg>' :
+      entry.status === "timeout" ? '<svg><use href="#i-clock"/></svg>' :
       '<svg><use href="#i-file"/></svg>';
 
     entry.li.querySelector(".file-item-status-text").textContent = statusLabel(entry);
@@ -214,7 +216,7 @@
       updateEntryUi(entry);
     });
 
-    var retryable = entries.filter(function (e) { return e.status === "pending" || e.status === "error"; });
+    var retryable = entries.filter(function (e) { return e.status === "pending" || e.status === "error" || e.status === "timeout"; });
     var anyActive = entries.some(isActive);
     var anyFinished = entries.some(function (e) {
       return e.status === "done" || e.status === "rejected";
@@ -226,7 +228,7 @@
     statusEl.textContent = summarize();
     statusEl.classList.toggle(
       "is-error",
-      !anyActive && entries.some(function (e) { return e.status === "rejected" || e.status === "error"; })
+      !anyActive && entries.some(function (e) { return e.status === "rejected" || e.status === "error" || e.status === "timeout"; })
     );
   };
 
@@ -318,6 +320,7 @@
     render();
 
     var formData = new FormData();
+    formData.append("document", entry.file, entry.file.name);
     formData.append("fileName", entry.file.name);
     formData.append("supplier", fields.supplier || "");
     formData.append("date", fields.date || "");
@@ -347,7 +350,11 @@
   // שלא ירוצו שתי בדיקות במקביל על אותה עבודה.
   var pollStatus = function (entry, jobId, attemptsLeft) {
     if (attemptsLeft <= 0) {
-      fail(entry, "הסריקה לקחה יותר מדי זמן. נסו שוב.");
+      entry.progress = computeProgress(entry);
+      entry.status = "timeout";
+      entry.message = "הסריקה לא הסתיימה בזמן. אפשר לנסות שוב.";
+      render();
+      if (entry._resolveBatch) { entry._resolveBatch(); entry._resolveBatch = null; }
       return;
     }
     entry.pollAttemptsLeft = attemptsLeft;
@@ -418,7 +425,7 @@
 
   submitBtn.addEventListener("click", function () {
     var toUpload = entries.filter(function (entry) {
-      return entry.status === "pending" || entry.status === "error";
+      return entry.status === "pending" || entry.status === "error" || entry.status === "timeout";
     });
     if (toUpload.length === 0) return;
 
@@ -461,25 +468,51 @@
     finishedEntries.forEach(function (entry) {
       var li = document.createElement("li");
       li.className = "modal-result-item is-" + entry.status;
-      var iconHref = entry.status === "done" ? "#i-check" : entry.status === "rejected" ? "#i-alert" : "#i-x";
+      var iconHref = entry.status === "done" ? "#i-check" :
+        entry.status === "rejected" ? "#i-alert" :
+        entry.status === "timeout" ? "#i-clock" : "#i-x";
       li.innerHTML =
         '<span class="modal-result-icon"><svg><use href="' + iconHref + '"/></svg></span>' +
         '<span class="modal-result-text">' +
         '<span class="modal-result-name"></span>' +
-        '<span class="modal-result-detail"></span>' +
         '</span>';
       li.querySelector(".modal-result-name").textContent = entry.file.name;
+      var textEl = li.querySelector(".modal-result-text");
 
-      var detailText;
-      if (entry.status === "done") {
-        var parts = [];
-        if (entry.fields && entry.fields.supplier) parts.push(entry.fields.supplier);
-        if (entry.fields && entry.fields.amount_after_vat) parts.push(entry.fields.amount_after_vat + ' ש"ח');
-        detailText = parts.length > 0 ? parts.join(" · ") : "נשמר בהצלחה";
+      if (entry.status === "done" && entry.fields) {
+        // אותם שדות שנכנסים לגיליון בדיוק - כדי שאפשר יהיה להשוות מול הנייר
+        var grid = document.createElement("div");
+        grid.className = "modal-result-fields";
+        var displayDate = entry.fields.date && /^\d{4}-\d{2}-\d{2}$/.test(entry.fields.date)
+          ? entry.fields.date.split("-").reverse().join("-")
+          : entry.fields.date;
+        var rows = [
+          ["ספק", entry.fields.supplier, false],
+          ["תאריך", displayDate, true],
+          ["מס' חשבונית", entry.fields.invoice_number, true],
+          ["לפני מע\"מ", entry.fields.amount_before_vat ? entry.fields.amount_before_vat + ' ש"ח' : "", false],
+          ["אחרי מע\"מ", entry.fields.amount_after_vat ? entry.fields.amount_after_vat + ' ש"ח' : "", false],
+          ["סוג שירות", entry.fields.service_type, false]
+        ];
+        rows.forEach(function (row) {
+          var field = document.createElement("div");
+          var label = document.createElement("span");
+          label.className = "mrf-label";
+          label.textContent = row[0];
+          var value = document.createElement("span");
+          value.className = "mrf-value" + (row[2] ? " ltr" : "");
+          value.textContent = row[1] || "—";
+          field.appendChild(label);
+          field.appendChild(value);
+          grid.appendChild(field);
+        });
+        textEl.appendChild(grid);
       } else {
-        detailText = entry.message || (entry.status === "rejected" ? "לא זוהתה קבלה" : "נכשל");
+        var detail = document.createElement("span");
+        detail.className = "modal-result-detail";
+        detail.textContent = entry.message || (entry.status === "rejected" ? "לא זוהתה קבלה" : entry.status === "timeout" ? "לא הסתיים בזמן" : "נכשל");
+        textEl.appendChild(detail);
       }
-      li.querySelector(".modal-result-detail").textContent = detailText;
       resultModalList.appendChild(li);
     });
 

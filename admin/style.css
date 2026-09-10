@@ -65,6 +65,7 @@
 .file-item[data-status="done"] .file-item-icon{color:#3f8f5f}
 .file-item[data-status="error"] .file-item-icon,.file-item[data-status="error"] .file-item-status-text{color:#8a3320}
 .file-item[data-status="rejected"] .file-item-icon,.file-item[data-status="rejected"] .file-item-status-text{color:#9a6212}
+.file-item[data-status="timeout"] .file-item-icon,.file-item[data-status="timeout"] .file-item-status-text{color:#5c6b73}
 .file-item-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
 .file-item-detail{font-size:12px;color:var(--ink-soft);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .file-item-detail[hidden]{display:none}
@@ -91,6 +92,7 @@
 .file-item[data-status="done"] .file-item-progress-fill{background:#3f8f5f}
 .file-item[data-status="rejected"] .file-item-progress-fill{background:#9a6212}
 .file-item[data-status="error"] .file-item-progress-fill{background:#8a3320}
+.file-item[data-status="timeout"] .file-item-progress-fill{background:#5c6b73}
 .file-item[data-status="uploading"] .file-item-progress-fill,
 .file-item[data-status="processing"] .file-item-progress-fill,
 .file-item[data-status="saving"] .file-item-progress-fill{
@@ -183,6 +185,11 @@
 .modal-result-item.is-done .modal-result-icon{color:#3f8f5f}
 .modal-result-item.is-rejected .modal-result-icon{color:#9a6212}
 .modal-result-item.is-error .modal-result-icon{color:#8a3320}
-.modal-result-text{display:flex;flex-direction:column;gap:2px;min-width:0}
+.modal-result-item.is-timeout .modal-result-icon{color:#5c6b73}
+.modal-result-text{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1}
 .modal-result-name{font-size:14px;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .modal-result-detail{font-size:12.5px;color:var(--ink-soft)}
+.modal-result-fields{display:grid;grid-template-columns:repeat(2,1fr);gap:4px 14px;margin-top:6px}
+.mrf-label{font-size:10.5px;color:var(--ink-soft);display:block}
+.mrf-value{font-size:12.5px;color:var(--ink)}
+.mrf-value.ltr{direction:ltr;unicode-bidi:isolate;display:inline-block}

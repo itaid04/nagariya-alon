@@ -3,6 +3,8 @@
    ממשק ראשוני בלבד: עוד נעצב ונתאים אחרי שהבאקאנד יהיה מוכן.
    ============================================================ */
 
+#admin-content[hidden],#admin-gate-section[hidden]{display:none!important}
+
 .admin-gate-section{padding:140px 0;min-height:60vh;display:flex;align-items:center}
 .gate-panel{
   max-width:380px;margin:0 auto;text-align:center;

@@ -1,0 +1,48 @@
+/* ============================================================
+   פאנל ניהול — קבלות
+   ממשק ראשוני בלבד: עוד נעצב ונתאים אחרי שהבאקאנד יהיה מוכן.
+   ============================================================ */
+
+.admin-hero{padding:140px 0 20px}
+.admin-hero h1{font-size:clamp(30px,4vw,42px);margin-top:6px}
+.admin-hero .lede{margin-top:14px;font-size:16.5px;color:var(--ink-soft);max-width:560px;line-height:1.7}
+
+.admin-upload-section{padding:24px 0 80px}
+.upload-panel{
+  max-width:640px;margin:0 auto;
+  background:var(--card);padding:32px;box-shadow:var(--shadow-sm);
+}
+
+.dropzone{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+  text-align:center;padding:44px 24px;cursor:pointer;
+  border:1.5px dashed var(--line);background:var(--paper);
+  transition:border-color .2s ease,background-color .2s ease;
+}
+.dropzone svg{width:30px;height:30px;color:var(--walnut);margin-bottom:6px}
+.dropzone-title{font-family:"Frank Ruhl Libre",serif;font-size:18px;color:var(--ink)}
+.dropzone-sub{font-size:13.5px;color:var(--ink-soft)}
+.dropzone:hover,.dropzone:focus-visible{border-color:var(--walnut);background:var(--paper-deep)}
+.dropzone.is-dragover{border-color:var(--walnut);background:var(--paper-deep)}
+
+.file-list{margin-top:18px}
+.file-list:not(:empty){margin-bottom:4px}
+.file-item{
+  display:flex;align-items:center;gap:12px;
+  padding:12px 4px;border-bottom:1px solid var(--line);
+}
+.file-item svg{width:18px;height:18px;color:var(--walnut);flex:none}
+.file-item-name{flex:1;min-width:0;font-size:14.5px;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.file-item-size{font-size:12.5px;color:var(--ink-soft);flex:none}
+.file-item-remove{
+  background:none;border:none;cursor:pointer;color:var(--ink-soft);flex:none;
+  display:flex;align-items:center;justify-content:center;padding:4px;
+}
+.file-item-remove svg{width:15px;height:15px}
+.file-item-remove:hover{color:var(--walnut)}
+
+.upload-panel .btn{margin-top:22px}
+.upload-panel .btn[disabled]{opacity:.5;cursor:not-allowed}
+.admin-note{margin-top:12px;font-size:12.5px;color:var(--ink-soft);text-align:center}
+
+@media (max-width:560px){.upload-panel{padding:24px}}

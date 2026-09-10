@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>פאנל ניהול | אלון ברששת</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&family=Frank+Ruhl+Libre:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-upload" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
+    <path d="M12 15V4M7 9l5-5 5 5"/><path d="M4 15v3a2 2 0 002 2h12a2 2 0 002-2v-3"/>
+  </symbol>
+  <symbol id="i-file" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
+    <path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/>
+  </symbol>
+  <symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+    <path d="M6 6l12 12M18 6L6 18"/>
+  </symbol>
+</svg>
+
+<nav class="nav">
+  <div class="wrap nav-inner">
+    <a class="brand" href="../index.html">
+      <span class="brand-mark"><img src="https://res.cloudinary.com/gom9owzu/image/upload/v1787850329/nagariya-alon/logo.jpg" alt="לוגו אלון נגרות" width="38" height="38"></span>
+      <span>אלון ברששת</span>
+    </a>
+    <div class="nav-cta">
+      <a class="tel-link" href="../index.html">חזרה לאתר</a>
+    </div>
+  </div>
+</nav>
+
+<main id="main">
+  <section class="admin-hero">
+    <div class="wrap">
+      <div class="eyebrow"><svg><use href="#i-file"/></svg> אזור ניהול</div>
+      <h1>פאנל קבלות</h1>
+      <p class="lede">כאן תוכל להעלות קבלות מהעסק. בשלב הזה זה רק ממשק ראשוני — עוד נתאים את העיצוב ונחבר את זה לתהליך שמעבד את הקבלות.</p>
+    </div>
+  </section>
+
+  <section class="admin-upload-section">
+    <div class="wrap">
+      <div class="upload-panel">
+        <div class="dropzone" id="dropzone" tabindex="0" role="button" aria-label="העלאת קבלות: גררו קבצים לכאן או לחצו לבחירה">
+          <svg><use href="#i-upload"/></svg>
+          <p class="dropzone-title">גררו קבצים לכאן</p>
+          <p class="dropzone-sub">או לחצו לבחירת קבצים מהמחשב — תמונות או PDF</p>
+          <input type="file" id="file-input" accept="image/*,.pdf" multiple hidden>
+        </div>
+
+        <ul class="file-list" id="file-list"></ul>
+
+        <button type="button" class="btn btn-primary btn-block" id="upload-submit-btn" disabled>העלאת קבלות</button>
+        <p class="admin-note" id="admin-status">בחרו קובץ אחד לפחות כדי להמשיך.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>

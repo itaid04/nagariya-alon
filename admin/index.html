@@ -43,6 +43,9 @@
   <symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
     <circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/>
   </symbol>
+  <symbol id="i-folder" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M3.5 6.5A1.5 1.5 0 015 5h4l2 2.2h8A1.5 1.5 0 0120.5 8.7v9.3A1.5 1.5 0 0119 19.5H5A1.5 1.5 0 013.5 18z"/>
+  </symbol>
 </svg>
 
 <nav class="nav">
@@ -116,9 +119,14 @@
         <div class="receipts-panel">
           <div class="receipts-panel-head">
             <h2>קבלות שהועלו</h2>
-            <button type="button" class="receipts-refresh-btn" id="receipts-refresh-btn" aria-label="רענון הרשימה">
-              <svg><use href="#i-refresh"/></svg>
-            </button>
+            <div class="receipts-panel-actions">
+              <a class="drive-link" href="https://drive.google.com/drive/folders/1yPxk6-xtVIdFoXm2DdFA3DTe1TrjZcWN" target="_blank" rel="noopener noreferrer">
+                <svg><use href="#i-folder"/></svg> תיקיית הדרייב
+              </a>
+              <button type="button" class="receipts-refresh-btn" id="receipts-refresh-btn" aria-label="רענון הרשימה">
+                <svg><use href="#i-refresh"/></svg>
+              </button>
+            </div>
           </div>
           <p class="receipts-monthly-total" id="receipts-monthly-total" hidden></p>
           <p class="admin-note" id="receipts-status">טוען קבלות...</p>

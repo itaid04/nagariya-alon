@@ -109,8 +109,9 @@
   };
 
   // אחוז התקדמות מוצג לפי שלב. בשלב הסריקה (הכי ארוך ובלתי-צפוי) האחוז
-  // מתקדם בהדרגה לפי כמות ניסיונות הפולינג שכבר בוצעו. בכישלון/דחייה
-  // האחוז "קופא" במקום שבו נעצר (entry.progress), כדי לא להטעות.
+  // מתקדם בהדרגה לפי כמות ניסיונות הפולינג שכבר בוצעו. כל מצב סופי (גם
+  // נכשל/נדחה/timeout, לא רק done) מציג פס מלא - התהליך נגמר, רק הצבע
+  // משתנה לפי התוצאה. פס קפוא באמצע נראה כאילו הוא עדיין תקוע.
   var computeProgress = function (entry) {
     if (entry.status === "pending") return 0;
     if (entry.status === "uploading") return 12;
@@ -125,8 +126,7 @@
       return Math.round(25 + frac * 55);
     }
     if (entry.status === "saving") return 90;
-    if (entry.status === "done") return 100;
-    return entry.progress || 0;
+    return 100;
   };
 
   var formatElapsed = function (ms) {
@@ -346,7 +346,6 @@
 
   var fail = function (entry, message) {
     stopTicker(entry);
-    entry.progress = computeProgress(entry);
     entry.status = "error";
     entry.message = message;
     render();
@@ -401,7 +400,6 @@
         return;
       }
       stopTicker(entry);
-      entry.progress = computeProgress(entry);
       entry.status = "timeout";
       entry.message = "הסריקה עדיין לא הסתיימה. אפשר לבדוק שוב בלי להעלות את הקובץ מחדש.";
       render();
@@ -437,7 +435,6 @@
             return;
           }
           stopTicker(entry);
-          entry.progress = computeProgress(entry);
           entry.status = "rejected";
           entry.message = data.message || "המסמך לא זוהה כקבלה.";
           render();

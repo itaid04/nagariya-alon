@@ -61,7 +61,7 @@
   <section class="admin-gate-section" id="admin-gate-section">
     <div class="wrap">
       <div class="gate-panel">
-        <svg class="gate-icon"><use href="#i-lock"/></svg>
+        <div class="gate-icon-badge"><svg class="gate-icon"><use href="#i-lock"/></svg></div>
         <h1 class="gate-title">אזור מוגן</h1>
         <p class="lede">האזור הזה מיועד לאלון בלבד. הזינו סיסמה כדי להמשיך.</p>
         <form id="gate-form" class="gate-form">
@@ -78,7 +78,7 @@
       <div class="wrap">
         <div class="eyebrow"><svg><use href="#i-file"/></svg> אזור ניהול</div>
         <h1>פאנל קבלות</h1>
-        <p class="lede">כאן תוכל להעלות קבלות מהעסק. בשלב הזה זה רק ממשק ראשוני — עוד נתאים את העיצוב ונחבר את זה לתהליך שמעבד את הקבלות.</p>
+        <p class="lede">מצלמים את הקבלה והיא נסרקת לבד: הספק, התאריך והסכום מזוהים אוטומטית, הקובץ נשמר בתיקיית החודש בדרייב, ושורה חדשה נכתבת בגיליון — מוכן להעברה לרואת החשבון.</p>
       </div>
     </section>
 
@@ -91,7 +91,7 @@
           <input type="file" id="camera-input" accept="image/*" capture="environment" hidden>
 
           <div class="dropzone" id="dropzone" tabindex="0" role="button" aria-label="העלאת קבלות: גררו קבצים לכאן או לחצו לבחירה">
-            <svg><use href="#i-upload"/></svg>
+            <span class="dropzone-icon-badge"><svg><use href="#i-upload"/></svg></span>
             <p class="dropzone-title">גררו קבצים לכאן</p>
             <p class="dropzone-sub">או לחצו לבחירת קבצים — תמונות או PDF</p>
             <input type="file" id="file-input" accept="image/*,.pdf" multiple hidden>

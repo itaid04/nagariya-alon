@@ -1,71 +1,107 @@
 /* ============================================================
    פאנל ניהול — קבלות
-   ממשק ראשוני בלבד: עוד נעצב ונתאים אחרי שהבאקאנד יהיה מוכן.
+   ממשיך את השפה החזותית של האתר עצמו (../style.css): פינה
+   קצוצה בזווית שיבוץ (--cut), צבע שטוח בלי גרדיאנטים, טיפוגרפיה
+   Frank Ruhl Libre לרגעי-מספר/כותרת ו-Rubik לכל השאר. שום
+   רכיב כאן לא "כרטיס דשבורד גנרי" — כל תיבה נושאת את אותה
+   גזרת פינה כמו הכפתורים והמסגרות בעמוד הבית.
    ============================================================ */
 
 #admin-content[hidden],#admin-gate-section[hidden]{display:none!important}
 
-.admin-gate-section{padding:140px 0;min-height:60vh;display:flex;align-items:center}
-.gate-panel{
-  max-width:380px;margin:0 auto;text-align:center;
-  background:var(--card);padding:36px 32px;box-shadow:var(--shadow-sm);
+:root{--cut-md:22px;--cut-sm:12px}
+@media (max-width:560px){:root{--cut-md:16px;--cut-sm:10px}}
+
+@media (prefers-reduced-motion:no-preference){
+  @keyframes admin-rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+  #admin-content{animation:admin-rise .55s ease both}
+  .gate-panel{animation:admin-rise .55s ease both}
 }
-.gate-icon{width:30px;height:30px;color:var(--walnut);margin:0 auto 14px}
+
+/* ---------- מיכל "לוח קצוץ" משותף לכל הפאנלים ---------- */
+.gate-panel,.upload-panel,.receipts-panel{
+  background:var(--card);
+  box-shadow:var(--shadow-sm);
+  clip-path:polygon(0 0, calc(100% - var(--cut-md)) 0, 100% var(--cut-md), 100% 100%, 0 100%);
+}
+
+.admin-gate-section{padding:150px 0 60px;min-height:60vh;display:flex;align-items:center}
+.gate-panel{max-width:380px;margin:0 auto;text-align:center;padding:40px 34px 36px}
+.gate-icon-badge{
+  width:52px;height:52px;border-radius:50%;background:var(--walnut);color:var(--paper);
+  display:flex;align-items:center;justify-content:center;margin:0 auto 18px;
+}
+.gate-icon{width:22px;height:22px}
 .gate-title{font-size:24px}
 .gate-panel .lede{margin-top:10px;font-size:15px}
-.gate-form{margin-top:24px;display:flex;flex-direction:column;gap:14px}
+.gate-form{margin-top:26px;display:flex;flex-direction:column;gap:14px}
 .gate-form input{
-  font-family:"Rubik",sans-serif;font-size:15px;padding:13px 15px;
-  border:1.5px solid var(--line);background:#fff;color:var(--ink);text-align:center;
+  font-family:"Rubik",sans-serif;font-size:15px;padding:14px 16px;
+  border:1.5px solid var(--line);background:var(--paper);color:var(--ink);text-align:center;
+  box-shadow:inset 0 2px 5px rgba(43,32,19,.08);
 }
 .gate-form input:focus{border-color:var(--walnut);outline:none}
 .gate-error{color:#8a3320}
 
-.admin-hero{padding:140px 0 20px}
+/* ---------- כותרת האזור ---------- */
+.admin-hero{padding:150px 0 22px}
 .admin-hero h1{font-size:clamp(30px,4vw,42px);margin-top:6px}
-.admin-hero .lede{margin-top:14px;font-size:16.5px;color:var(--ink-soft);max-width:560px;line-height:1.7}
+.admin-hero .lede{margin-top:14px;font-size:16.5px;color:var(--ink-soft);max-width:580px;line-height:1.75}
 
+/* ---------- העלאה ---------- */
 .admin-upload-section{padding:24px 0 80px}
-.upload-panel{
-  max-width:640px;margin:0 auto;
-  background:var(--card);padding:32px;box-shadow:var(--shadow-sm);
-}
+.upload-panel{max-width:640px;margin:0 auto;padding:34px}
 
-/* .btn קובע display:inline-flex, שדורס את התנהגות [hidden] של הדפדפן -
-   בלי הכלל הזה כפתור המצלמה מופיע גם בדסקטופ */
 .camera-btn[hidden]{display:none!important}
 .camera-btn{margin:0 0 16px}
 .camera-btn svg{width:20px;height:20px;flex:none}
 
 .mobile-hint{
-  display:flex;align-items:flex-start;gap:8px;margin-top:14px;
-  font-size:12.5px;color:var(--ink-soft);line-height:1.5;
+  display:flex;align-items:flex-start;gap:9px;margin:0 0 18px;
+  font-size:12.5px;color:var(--ink-soft);line-height:1.55;
+  background:var(--paper-deep);padding:11px 14px;
+  clip-path:polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%);
 }
 .mobile-hint[hidden]{display:none}
-.mobile-hint svg{width:15px;height:15px;color:var(--walnut);flex:none;margin-top:2px}
+.mobile-hint svg{width:15px;height:15px;color:var(--walnut);flex:none;margin-top:1px}
 
 .dropzone{
-  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
-  text-align:center;padding:44px 24px;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;
+  text-align:center;padding:46px 24px;cursor:pointer;
   border:1.5px dashed var(--line);background:var(--paper);
-  transition:border-color .2s ease,background-color .2s ease;
+  clip-path:polygon(0 0, calc(100% - var(--cut-sm)) 0, 100% var(--cut-sm), 100% 100%, 0 100%);
+  transition:border-color .2s ease,background-color .2s ease,transform .2s ease;
 }
-.dropzone svg{width:30px;height:30px;color:var(--walnut);margin-bottom:6px}
-.dropzone-title{font-family:"Frank Ruhl Libre",serif;font-size:18px;color:var(--ink)}
+.dropzone-icon-badge{
+  width:48px;height:48px;border-radius:50%;background:var(--paper-deep);color:var(--walnut);
+  display:flex;align-items:center;justify-content:center;margin-bottom:4px;
+  transition:background-color .2s ease,transform .2s ease;
+}
+.dropzone-icon-badge svg{width:22px;height:22px}
+.dropzone-title{font-family:"Frank Ruhl Libre",serif;font-size:19px;color:var(--ink)}
 .dropzone-sub{font-size:13.5px;color:var(--ink-soft)}
 .dropzone:hover,.dropzone:focus-visible{border-color:var(--walnut);background:var(--paper-deep)}
-.dropzone.is-dragover{border-color:var(--walnut);background:var(--paper-deep)}
+.dropzone:hover .dropzone-icon-badge,.dropzone:focus-visible .dropzone-icon-badge{background:var(--walnut);color:var(--paper);transform:translateY(-2px)}
+.dropzone.is-dragover{border-color:var(--walnut);background:var(--paper-deep);transform:scale(1.01)}
+.dropzone.is-dragover .dropzone-icon-badge{background:var(--walnut);color:var(--paper)}
 
-.file-list{margin-top:18px}
-.file-list:not(:empty){margin-bottom:4px}
-.file-item{padding:12px 4px;border-bottom:1px solid var(--line)}
+.file-list{margin-top:20px}
+.file-list:not(:empty){margin-bottom:6px}
+.file-item{padding:13px 4px;border-bottom:1px solid var(--line)}
 .file-item-row{display:flex;align-items:center;gap:12px}
-.file-item svg{width:18px;height:18px;color:var(--walnut);flex:none}
-.file-item-icon{display:flex;align-items:center;justify-content:center;width:18px;height:18px;flex:none}
-.file-item[data-status="done"] .file-item-icon{color:#3f8f5f}
-.file-item[data-status="error"] .file-item-icon,.file-item[data-status="error"] .file-item-status-text{color:#8a3320}
-.file-item[data-status="rejected"] .file-item-icon,.file-item[data-status="rejected"] .file-item-status-text{color:#9a6212}
-.file-item[data-status="timeout"] .file-item-icon,.file-item[data-status="timeout"] .file-item-status-text{color:#5c6b73}
+.file-item-icon{
+  display:flex;align-items:center;justify-content:center;flex:none;
+  width:28px;height:28px;border-radius:50%;background:var(--paper-deep);
+  transition:background-color .2s ease,color .2s ease;
+}
+.file-item-icon svg{width:15px;height:15px;color:var(--walnut)}
+.file-item[data-status="done"] .file-item-icon{background:#e4f2e9;color:#3f8f5f}
+.file-item[data-status="error"] .file-item-icon{background:#f7e4dc;color:#8a3320}
+.file-item[data-status="rejected"] .file-item-icon{background:#fbeee0;color:#9a6212}
+.file-item[data-status="timeout"] .file-item-icon{background:#e6eaec;color:#5c6b73}
+.file-item[data-status="error"] .file-item-status-text{color:#8a3320}
+.file-item[data-status="rejected"] .file-item-status-text{color:#9a6212}
+.file-item[data-status="timeout"] .file-item-status-text{color:#5c6b73}
 .file-item-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
 .file-item-detail{font-size:12px;color:var(--ink-soft);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .file-item-detail[hidden]{display:none}
@@ -76,8 +112,8 @@
 }
 @keyframes spin{to{transform:rotate(360deg)}}
 .file-item-name{min-width:0;font-size:14.5px;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.file-item-status-text{font-size:12.5px;color:var(--ink-soft);flex:none;max-width:45%;text-align:end}
-.file-item-size{font-size:12.5px;color:var(--ink-soft);flex:none}
+.file-item-status-text{font-size:12.5px;color:var(--ink-soft);flex:none;max-width:45%;text-align:end;font-variant-numeric:tabular-nums}
+.file-item-size{font-size:12.5px;color:var(--ink-soft);flex:none;font-variant-numeric:tabular-nums}
 .file-item-remove{
   background:none;border:none;cursor:pointer;color:var(--ink-soft);flex:none;
   display:flex;align-items:center;justify-content:center;padding:4px;
@@ -86,75 +122,89 @@
 .file-item-remove svg{width:15px;height:15px}
 .file-item-remove:hover{color:var(--walnut)}
 
-.file-item-progress{height:4px;border-radius:2px;background:var(--line);overflow:hidden;margin-top:8px}
+.file-item-progress{height:4px;border-radius:2px;background:var(--line);overflow:hidden;margin-top:9px;margin-inline-start:40px}
 .file-item-progress[hidden]{display:none}
 .file-item-progress-fill{height:100%;width:0%;background:var(--walnut);border-radius:2px;transition:width .35s ease}
 .file-item[data-status="done"] .file-item-progress-fill{background:#3f8f5f}
 .file-item[data-status="rejected"] .file-item-progress-fill{background:#9a6212}
 .file-item[data-status="error"] .file-item-progress-fill{background:#8a3320}
 .file-item[data-status="timeout"] .file-item-progress-fill{background:#5c6b73}
-.file-item[data-status="uploading"] .file-item-progress-fill,
-.file-item[data-status="processing"] .file-item-progress-fill,
-.file-item[data-status="saving"] .file-item-progress-fill{
-  background-image:linear-gradient(135deg, rgba(255,255,255,.4) 25%, transparent 25%, transparent 50%, rgba(255,255,255,.4) 50%, rgba(255,255,255,.4) 75%, transparent 75%, transparent);
-  background-size:14px 14px;
-  animation:file-progress-stripes .9s linear infinite;
+@media (prefers-reduced-motion:no-preference){
+  .file-item[data-status="uploading"] .file-item-progress-fill,
+  .file-item[data-status="processing"] .file-item-progress-fill,
+  .file-item[data-status="saving"] .file-item-progress-fill{animation:file-progress-pulse 1.6s ease-in-out infinite}
+  @keyframes file-progress-pulse{0%,100%{opacity:1}50%{opacity:.55}}
 }
-@keyframes file-progress-stripes{from{background-position:0 0}to{background-position:14px 0}}
 
-.upload-panel #upload-submit-btn{margin-top:22px}
+.upload-panel #upload-submit-btn{margin-top:24px}
 .upload-panel .btn[disabled]{opacity:.5;cursor:not-allowed}
 .clear-done-btn{
-  display:block;margin:12px auto 0;background:none;border:none;cursor:pointer;
+  display:block;margin:13px auto 0;background:none;border:none;cursor:pointer;
   font-size:12.5px;color:var(--ink-soft);text-decoration:underline;padding:4px;
 }
 .clear-done-btn[hidden]{display:none}
 .clear-done-btn:hover{color:var(--walnut)}
-.admin-note{margin-top:12px;font-size:12.5px;color:var(--ink-soft);text-align:center}
+.admin-note{margin-top:13px;font-size:12.5px;color:var(--ink-soft);text-align:center}
 .admin-note.is-error{color:#8a3320}
 
-@media (max-width:560px){.upload-panel{padding:24px}}
+@media (max-width:560px){.upload-panel{padding:26px 22px}}
 
 /* ---------- קבלות שהועלו ---------- */
 .admin-receipts-section{padding:24px 0 90px}
-.receipts-panel{max-width:640px;margin:0 auto;background:var(--card);padding:32px;box-shadow:var(--shadow-sm)}
+.receipts-panel{max-width:640px;margin:0 auto;padding:34px}
 .receipts-panel-head{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .receipts-panel-head h2{font-size:19px;font-family:"Frank Ruhl Libre",serif}
 .receipts-refresh-btn{
   background:none;border:none;cursor:pointer;color:var(--ink-soft);flex:none;
-  display:flex;align-items:center;justify-content:center;padding:6px;
+  display:flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;
+  transition:background-color .15s ease,color .15s ease;
 }
-.receipts-refresh-btn:hover{color:var(--walnut)}
+.receipts-refresh-btn:hover{color:var(--walnut);background:var(--paper-deep)}
 .receipts-refresh-btn:disabled{opacity:.4;cursor:default}
 .receipts-refresh-btn svg{width:17px;height:17px}
 .receipts-refresh-btn.is-loading svg{animation:spin .8s linear infinite}
+
+/* "לוח קבלה" בעץ אגוז — הרגע החזותי המרכזי של הפאנל: הסכום
+   שאלון בא לבדוק קודם כל, מוצג כמו שלט חרוט ולא כשורת טקסט. */
 .receipts-monthly-total{
-  margin-top:10px;padding:11px 16px;background:var(--paper-deep);
-  font-size:14px;color:var(--ink);
+  margin-top:16px;padding:18px 22px;
+  background:var(--walnut);color:var(--paper);
+  clip-path:polygon(0 0, calc(100% - var(--cut-sm)) 0, 100% var(--cut-sm), 100% 100%, 0 100%);
+  font-family:"Rubik",sans-serif;font-size:13px;letter-spacing:.02em;
+  box-shadow:0 4px 0 var(--walnut-deep);
 }
 .receipts-monthly-total[hidden]{display:none}
-.receipts-monthly-total b{color:var(--walnut);font-weight:700}
-.receipts-months{margin-top:14px;display:flex;flex-wrap:wrap;gap:8px}
+.receipts-monthly-total b{
+  font-family:"Frank Ruhl Libre",serif;font-weight:500;font-size:28px;
+  font-variant-numeric:tabular-nums;color:var(--paper);margin:0 3px;
+}
+
+.receipts-months{margin-top:18px;display:flex;flex-wrap:wrap;gap:6px}
 .receipts-months[hidden]{display:none}
 .month-btn{
-  font-family:"Rubik",sans-serif;font-size:12.5px;color:var(--ink-soft);
-  background:var(--paper);border:1px solid var(--line);padding:7px 14px;
-  cursor:pointer;transition:border-color .15s ease,color .15s ease,background-color .15s ease;
+  font-family:"Rubik",sans-serif;font-size:12.5px;font-weight:600;color:var(--ink-soft);
+  background:var(--paper);border:1px solid var(--line);border-bottom-width:3px;padding:8px 15px 6px;
+  cursor:pointer;transition:border-color .15s ease,color .15s ease,background-color .15s ease,transform .15s ease;
+  font-variant-numeric:tabular-nums;
 }
-.month-btn:hover{border-color:var(--walnut);color:var(--ink)}
-.month-btn.is-active{background:var(--walnut);border-color:var(--walnut);color:#fff}
-.receipts-list{margin-top:14px;display:flex;flex-direction:column;gap:12px;list-style:none;padding:0}
-.receipt-card{border:1px solid var(--line);padding:14px 16px;background:var(--paper)}
-.receipt-card-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:8px}
-.receipt-card-supplier{font-family:"Frank Ruhl Libre",serif;font-size:16px;color:var(--ink)}
-.receipt-card-amount{font-size:15px;font-weight:600;color:var(--walnut);flex:none;white-space:nowrap}
-.receipt-card-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px 16px}
+.month-btn:hover{border-color:var(--walnut);color:var(--ink);transform:translateY(-1px)}
+.month-btn.is-active{background:var(--walnut);border-color:var(--walnut-deep);color:#fff;transform:translateY(1px)}
+
+.receipts-list{margin-top:16px;display:flex;flex-direction:column;gap:12px;list-style:none;padding:0}
+.receipt-card{
+  border:1px solid var(--line);padding:16px 18px;background:var(--paper);
+  clip-path:polygon(0 0, calc(100% - var(--cut-sm)) 0, 100% var(--cut-sm), 100% 100%, 0 100%);
+}
+.receipt-card-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:9px}
+.receipt-card-supplier{font-family:"Frank Ruhl Libre",serif;font-size:16.5px;color:var(--ink)}
+.receipt-card-amount{font-size:15.5px;font-weight:700;color:var(--walnut);flex:none;white-space:nowrap;font-variant-numeric:tabular-nums}
+.receipt-card-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:9px 16px}
 .receipt-field{display:flex;flex-direction:column;gap:1px;min-width:0}
-.receipt-label{font-size:11px;color:var(--ink-soft)}
-.receipt-value{font-size:13.5px;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.receipt-label{font-size:10.5px;letter-spacing:.03em;text-transform:uppercase;color:var(--ink-soft)}
+.receipt-value{font-size:13.5px;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-variant-numeric:tabular-nums}
 .rv-date,.rv-invoice,.rv-uploaded{direction:ltr;unicode-bidi:isolate;display:inline-block}
-.receipt-card-foot{margin-top:10px;font-size:11.5px;color:var(--ink-soft)}
-@media (max-width:560px){.receipts-panel{padding:24px}}
+.receipt-card-foot{margin-top:11px;padding-top:9px;border-top:1px solid var(--line);font-size:11px;color:var(--ink-soft)}
+@media (max-width:560px){.receipts-panel{padding:26px 22px}}
 
 /* ---------- פופאפ תוצאת העלאה ---------- */
 .modal-backdrop{
@@ -164,7 +214,8 @@
 .modal-backdrop[hidden]{display:none}
 .modal-panel{
   position:relative;max-width:440px;width:100%;max-height:85vh;overflow-y:auto;
-  background:var(--card);padding:34px 28px 28px;box-shadow:var(--shadow-sm);text-align:center;
+  background:var(--card);padding:36px 30px 30px;box-shadow:var(--shadow);text-align:center;
+  clip-path:polygon(0 0, calc(100% - var(--cut-md)) 0, 100% var(--cut-md), 100% 100%, 0 100%);
 }
 .modal-close-x{
   position:absolute;top:14px;left:14px;background:none;border:none;cursor:pointer;
@@ -172,24 +223,27 @@
 }
 .modal-close-x svg{width:16px;height:16px}
 .modal-close-x:hover{color:var(--walnut)}
-.modal-icon{width:46px;height:46px;margin:0 auto 12px;display:flex;align-items:center;justify-content:center;border-radius:50%}
-.modal-icon svg{width:24px;height:24px}
+.modal-icon{width:50px;height:50px;margin:0 auto 14px;display:flex;align-items:center;justify-content:center;border-radius:50%}
+.modal-icon svg{width:25px;height:25px}
 .modal-icon.is-success{background:#e4f2e9;color:#3f8f5f}
 .modal-icon.is-warning{background:#fbeee0;color:#9a6212}
 .modal-panel h2{font-size:21px;font-family:"Frank Ruhl Libre",serif}
-.modal-result-list{margin:18px 0 22px;text-align:right;list-style:none;padding:0}
-.modal-result-item{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid var(--line)}
+.modal-result-list{margin:20px 0 24px;text-align:right;list-style:none;padding:0}
+.modal-result-item{display:flex;align-items:flex-start;gap:11px;padding:11px 0;border-bottom:1px solid var(--line)}
 .modal-result-item:last-child{border-bottom:none}
-.modal-result-icon{width:17px;height:17px;flex:none;margin-top:2px}
-.modal-result-icon svg{width:17px;height:17px;display:block}
-.modal-result-item.is-done .modal-result-icon{color:#3f8f5f}
-.modal-result-item.is-rejected .modal-result-icon{color:#9a6212}
-.modal-result-item.is-error .modal-result-icon{color:#8a3320}
-.modal-result-item.is-timeout .modal-result-icon{color:#5c6b73}
+.modal-result-icon{
+  width:24px;height:24px;flex:none;margin-top:1px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+}
+.modal-result-icon svg{width:13px;height:13px;display:block}
+.modal-result-item.is-done .modal-result-icon{background:#e4f2e9;color:#3f8f5f}
+.modal-result-item.is-rejected .modal-result-icon{background:#fbeee0;color:#9a6212}
+.modal-result-item.is-error .modal-result-icon{background:#f7e4dc;color:#8a3320}
+.modal-result-item.is-timeout .modal-result-icon{background:#e6eaec;color:#5c6b73}
 .modal-result-text{display:flex;flex-direction:column;gap:2px;min-width:0;flex:1}
 .modal-result-name{font-size:14px;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .modal-result-detail{font-size:12.5px;color:var(--ink-soft)}
-.modal-result-fields{display:grid;grid-template-columns:repeat(2,1fr);gap:4px 14px;margin-top:6px}
+.modal-result-fields{display:grid;grid-template-columns:repeat(2,1fr);gap:5px 14px;margin-top:7px}
 .mrf-label{font-size:10.5px;color:var(--ink-soft);display:block}
-.mrf-value{font-size:12.5px;color:var(--ink)}
+.mrf-value{font-size:12.5px;color:var(--ink);font-variant-numeric:tabular-nums}
 .mrf-value.ltr{direction:ltr;unicode-bidi:isolate;display:inline-block}

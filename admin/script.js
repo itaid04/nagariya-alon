@@ -48,8 +48,14 @@
   var SUBMIT_URL = "https://itaid04.app.n8n.cloud/webhook/nagariya-alon-receipt-submit";
   var STATUS_URL = "https://itaid04.app.n8n.cloud/webhook/nagariya-alon-receipt-status";
   var FINALIZE_URL = "https://itaid04.app.n8n.cloud/webhook/nagariya-alon-receipt-finalize";
-  var POLL_INTERVAL_MS = 5000;
-  var POLL_MAX_ATTEMPTS = 36; // עד כ-3 דקות לקבלה אחת
+  // פולינג בשני קצבים: מהיר לרוב המקרים (קבלה בודדת נגמרת תוך שניות-עשרות
+  // שניות), ואיטי יותר אחרי זה - למסמכים גדולים/מרובי-עמודים שלוקחים יותר
+  // זמן ל-LlamaParse. ה"איטי" לא נועד לחסוך על עומס - הוא נועד לא לוותר
+  // מוקדם מדי על עבודה שעדיין רצה בהצלחה בצד LlamaParse.
+  var FAST_POLL_INTERVAL_MS = 5000;
+  var FAST_POLL_MAX_ATTEMPTS = 36; // 3 דקות
+  var SLOW_POLL_INTERVAL_MS = 15000;
+  var SLOW_POLL_MAX_ATTEMPTS = 28; // עוד כ-7 דקות, סה"כ כ-10 דקות
   var MAX_FILES_MOBILE = 4;
 
   var LIST_URL = "https://itaid04.app.n8n.cloud/webhook/nagariya-alon-receipts-list";
@@ -109,8 +115,13 @@
     if (entry.status === "pending") return 0;
     if (entry.status === "uploading") return 12;
     if (entry.status === "processing") {
-      var attemptsUsed = POLL_MAX_ATTEMPTS - (entry.pollAttemptsLeft != null ? entry.pollAttemptsLeft : POLL_MAX_ATTEMPTS);
-      var frac = Math.min(1, Math.max(0, attemptsUsed / POLL_MAX_ATTEMPTS));
+      // בקצב האיטי אין דרך לדעת כמה עוד נשאר, אז הבר קופא במקום שבו הגיע
+      // בסוף הקצב המהיר - החיות מגיעה מהטיימר המתקתק בטקסט, לא מהבר.
+      if (entry.pollPhase === "slow") {
+        return entry.slowPhaseProgress != null ? entry.slowPhaseProgress : 80;
+      }
+      var attemptsUsed = FAST_POLL_MAX_ATTEMPTS - (entry.pollAttemptsLeft != null ? entry.pollAttemptsLeft : FAST_POLL_MAX_ATTEMPTS);
+      var frac = Math.min(1, Math.max(0, attemptsUsed / FAST_POLL_MAX_ATTEMPTS));
       return Math.round(25 + frac * 55);
     }
     if (entry.status === "saving") return 90;
@@ -118,9 +129,22 @@
     return entry.progress || 0;
   };
 
+  var formatElapsed = function (ms) {
+    var totalSec = Math.max(0, Math.floor(ms / 1000));
+    var m = Math.floor(totalSec / 60);
+    var s = totalSec % 60;
+    return m + ":" + (s < 10 ? "0" + s : s);
+  };
+
   var statusLabel = function (entry) {
     if (entry.status === "uploading") return "מעלה...";
-    if (entry.status === "processing") return "בסריקה ובזיהוי... " + computeProgress(entry) + "%";
+    if (entry.status === "processing") {
+      if (entry.pollPhase === "slow") {
+        var elapsed = entry.uploadStartedAt ? formatElapsed(Date.now() - entry.uploadStartedAt) : "0:00";
+        return "הקובץ גדול, הסריקה לוקחת יותר זמן... עדיין סורק (" + elapsed + ")";
+      }
+      return "בסריקה ובזיהוי... " + computeProgress(entry) + "%";
+    }
     if (entry.status === "saving") return "שומר...";
     if (entry.status === "done") return "נשמר";
     if (entry.status === "rejected") return entry.message || "לא זוהתה קבלה";
@@ -304,7 +328,24 @@
     render();
   });
 
+  // טיימר מקומי שמרענן את הטקסט כל שנייה בלי לגעת ברשת - כדי שבקצב האיטי
+  // (בדיקות אמיתיות מול השרת רחוקות זו מזו) המסך עדיין ירגיש חי.
+  var stopTicker = function (entry) {
+    if (entry._tickInterval) {
+      window.clearInterval(entry._tickInterval);
+      entry._tickInterval = null;
+    }
+  };
+  var startTicker = function (entry) {
+    stopTicker(entry);
+    entry._tickInterval = window.setInterval(function () {
+      if (entry.status !== "processing") { stopTicker(entry); return; }
+      updateEntryUi(entry);
+    }, 1000);
+  };
+
   var fail = function (entry, message) {
+    stopTicker(entry);
     entry.progress = computeProgress(entry);
     entry.status = "error";
     entry.message = message;
@@ -315,6 +356,7 @@
   // שלב 3: שמירה בדרייב + שיטס + מייל הצלחה. הקובץ נשלח שוב מהדפדפן,
   // כי ה-webhook של הסטטוס מקבל רק jobId ואין לו גישה לקובץ המקורי.
   var finalizeEntry = function (entry, fields) {
+    stopTicker(entry);
     entry.status = "saving";
     entry.fields = fields;
     render();
@@ -347,12 +389,21 @@
   };
 
   // שלב 2: פולינג. הבקשה הבאה נשלחת רק אחרי שהתשובה הקודמת חזרה, כדי
-  // שלא ירוצו שתי בדיקות במקביל על אותה עבודה.
-  var pollStatus = function (entry, jobId, attemptsLeft) {
+  // שלא ירוצו שתי בדיקות במקביל על אותה עבודה. שני קצבים - ראו הגדרת
+  // FAST_/SLOW_ למעלה. כשהקצב המהיר נגמר בלי תוצאה, לא מוותרים - עוברים
+  // לקצב האיטי במקום ישר ל-timeout.
+  var pollStatus = function (entry, jobId, phase, attemptsLeft) {
+    entry.pollPhase = phase;
     if (attemptsLeft <= 0) {
+      if (phase === "fast") {
+        entry.slowPhaseProgress = computeProgress(entry);
+        pollStatus(entry, jobId, "slow", SLOW_POLL_MAX_ATTEMPTS);
+        return;
+      }
+      stopTicker(entry);
       entry.progress = computeProgress(entry);
       entry.status = "timeout";
-      entry.message = "הסריקה לא הסתיימה בזמן. אפשר לנסות שוב.";
+      entry.message = "הסריקה עדיין לא הסתיימה. אפשר לבדוק שוב בלי להעלות את הקובץ מחדש.";
       render();
       if (entry._resolveBatch) { entry._resolveBatch(); entry._resolveBatch = null; }
       return;
@@ -371,7 +422,7 @@
         })
         .then(function (data) {
           if (!data || !data.done) {
-            pollStatus(entry, jobId, attemptsLeft - 1);
+            pollStatus(entry, jobId, phase, attemptsLeft - 1);
             return;
           }
           if (data.valid === true) {
@@ -385,6 +436,7 @@
             });
             return;
           }
+          stopTicker(entry);
           entry.progress = computeProgress(entry);
           entry.status = "rejected";
           entry.message = data.message || "המסמך לא זוהה כקבלה.";
@@ -394,7 +446,7 @@
         .catch(function () {
           fail(entry, "שגיאה בבדיקת הסטטוס. נסו שוב.");
         });
-    }, POLL_INTERVAL_MS);
+    }, phase === "slow" ? SLOW_POLL_INTERVAL_MS : FAST_POLL_INTERVAL_MS);
   };
 
   // שלב 1: העלאה ל-LlamaParse דרך n8n
@@ -414,13 +466,32 @@
       })
       .then(function (data) {
         if (!data || !data.ok || !data.jobId) throw new Error("missing jobId in response");
+        entry.jobId = data.jobId;
         entry.status = "processing";
+        entry.uploadStartedAt = Date.now();
         render();
-        pollStatus(entry, data.jobId, POLL_MAX_ATTEMPTS);
+        startTicker(entry);
+        pollStatus(entry, data.jobId, "fast", FAST_POLL_MAX_ATTEMPTS);
       })
       .catch(function () {
         fail(entry, "ההעלאה נכשלה. נסו שוב.");
       });
+  };
+
+  // "נסה שוב" על קבלה שהגיעה ל-timeout לא מעלה את הקובץ מחדש (שיפתח עבודת
+  // LlamaParse כפולה ומיותרת) - הוא פשוט ממשיך לבדוק את אותה עבודה, כי
+  // ה-jobId וקובץ המקור עדיין חיים בזיכרון הדפדפן מהניסיון הקודם.
+  var retryEntry = function (entry) {
+    if (entry.status === "timeout" && entry.jobId) {
+      entry.message = null;
+      entry.status = "processing";
+      entry.uploadStartedAt = Date.now();
+      render();
+      startTicker(entry);
+      pollStatus(entry, entry.jobId, "fast", FAST_POLL_MAX_ATTEMPTS);
+      return;
+    }
+    uploadEntry(entry);
   };
 
   submitBtn.addEventListener("click", function () {
@@ -437,8 +508,9 @@
       });
     });
 
-    // במקביל - כל הקבלות יוצאות יחד, כל אחת עם הפולינג שלה
-    toUpload.forEach(uploadEntry);
+    // במקביל - כל הקבלות יוצאות יחד, כל אחת עם הפולינג שלה. קבלות ב-timeout
+    // ממשיכות על אותה עבודה קיימת במקום להעלות מחדש - ראו retryEntry.
+    toUpload.forEach(retryEntry);
 
     Promise.all(batchPromises).then(function () {
       showResultModal(toUpload);

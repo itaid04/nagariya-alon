@@ -136,6 +136,14 @@
   @keyframes file-progress-pulse{0%,100%{opacity:1}50%{opacity:.55}}
 }
 
+.file-item-retry{
+  display:block;margin-top:9px;margin-inline-start:40px;background:none;border:none;cursor:pointer;
+  font-family:"Rubik",sans-serif;font-size:12.5px;font-weight:600;color:var(--walnut);
+  text-decoration:underline;padding:2px 0;
+}
+.file-item-retry[hidden]{display:none}
+.file-item-retry:hover{color:var(--walnut-deep)}
+
 .upload-panel #upload-submit-btn{margin-top:24px}
 .upload-panel .btn[disabled]{opacity:.5;cursor:not-allowed}
 .clear-done-btn{

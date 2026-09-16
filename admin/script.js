@@ -210,6 +210,11 @@
     }
 
     entry.li.querySelector(".file-item-remove").hidden = isActive(entry);
+
+    // "בדוק שוב" מופיע רק ב-timeout, ולא "העלאת קבלות" הכללי - כי כאן
+    // בכוונה לא מעלים את הקובץ מחדש, רק ממשיכים לבדוק את אותה סריקה.
+    // כפתור שקורא לזה "העלאה" היה מטעה: זה בדיוק ההפך ממה שבאמת קורה.
+    entry.li.querySelector(".file-item-retry").hidden = entry.status !== "timeout";
   };
 
   var render = function () {
@@ -228,19 +233,25 @@
         '<span class="file-item-size"></span>' +
         '<button type="button" class="file-item-remove" aria-label="הסרת קובץ"><svg><use href="#i-x"/></svg></button>' +
         '</div>' +
-        '<div class="file-item-progress" hidden><div class="file-item-progress-fill"></div></div>';
+        '<div class="file-item-progress" hidden><div class="file-item-progress-fill"></div></div>' +
+        '<button type="button" class="file-item-retry" hidden>בדוק שוב</button>';
       li.querySelector(".file-item-name").textContent = entry.file.name;
       li.querySelector(".file-item-size").textContent = formatSize(entry.file.size);
       li.querySelector(".file-item-remove").addEventListener("click", function () {
         entries = entries.filter(function (e) { return e !== entry; });
         render();
       });
+      li.querySelector(".file-item-retry").addEventListener("click", function () {
+        retrySingleEntry(entry);
+      });
       entry.li = li;
       fileList.appendChild(li);
       updateEntryUi(entry);
     });
 
-    var retryable = entries.filter(function (e) { return e.status === "pending" || e.status === "error" || e.status === "timeout"; });
+    // timeout לא נחשב "retryable" כאן - יש לו כפתור "בדוק שוב" נפרד על השורה,
+    // כדי שהכפתור הכללי "העלאת קבלות" תמיד יתאר בכנות מה הוא עומד לעשות.
+    var retryable = entries.filter(function (e) { return e.status === "pending" || e.status === "error"; });
     var anyActive = entries.some(isActive);
     var anyFinished = entries.some(function (e) {
       return e.status === "done" || e.status === "rejected";
@@ -475,9 +486,11 @@
       });
   };
 
-  // "נסה שוב" על קבלה שהגיעה ל-timeout לא מעלה את הקובץ מחדש (שיפתח עבודת
+  // המשך על קבלה שהגיעה ל-timeout לא מעלה את הקובץ מחדש (שיפתח עבודת
   // LlamaParse כפולה ומיותרת) - הוא פשוט ממשיך לבדוק את אותה עבודה, כי
-  // ה-jobId וקובץ המקור עדיין חיים בזיכרון הדפדפן מהניסיון הקודם.
+  // ה-jobId וקובץ המקור עדיין חיים בזיכרון הדפדפן מהניסיון הקודם. נקרא רק
+  // מכפתור "בדוק שוב" הייעודי לכל קבלה - לא מהכפתור הכללי "העלאת קבלות",
+  // כדי שלא ייווצר רושם שגוי שהקובץ נשלח שוב.
   var retryEntry = function (entry) {
     if (entry.status === "timeout" && entry.jobId) {
       entry.message = null;
@@ -491,9 +504,22 @@
     uploadEntry(entry);
   };
 
+  // גרסה לקבלה בודדת אחת, מהכפתור "בדוק שוב" שעל השורה עצמה - מציגה פופאפ
+  // סיכום ומרעננת את רשימת הקבלות בסיום, בדיוק כמו סבב העלאה רגיל.
+  var retrySingleEntry = function (entry) {
+    var promise = new Promise(function (resolve) {
+      entry._resolveBatch = resolve;
+    });
+    retryEntry(entry);
+    promise.then(function () {
+      showResultModal([entry]);
+      loadReceiptsList();
+    });
+  };
+
   submitBtn.addEventListener("click", function () {
     var toUpload = entries.filter(function (entry) {
-      return entry.status === "pending" || entry.status === "error" || entry.status === "timeout";
+      return entry.status === "pending" || entry.status === "error";
     });
     if (toUpload.length === 0) return;
 
@@ -506,7 +532,7 @@
     });
 
     // במקביל - כל הקבלות יוצאות יחד, כל אחת עם הפולינג שלה. קבלות ב-timeout
-    // ממשיכות על אותה עבודה קיימת במקום להעלות מחדש - ראו retryEntry.
+    // לא נכללות כאן בכוונה - יש להן כפתור "בדוק שוב" נפרד על השורה עצמה.
     toUpload.forEach(retryEntry);
 
     Promise.all(batchPromises).then(function () {

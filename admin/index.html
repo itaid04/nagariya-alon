@@ -80,7 +80,18 @@
     <section class="admin-hero">
       <div class="wrap">
         <div class="eyebrow"><svg><use href="#i-file"/></svg> אזור ניהול</div>
-        <h1>פאנל קבלות</h1>
+        <h1>פאנל ניהול</h1>
+        <p class="lede">שני כלים במקום אחד: קבלות שנסרקות לבד לרואת החשבון, והמסמכים שהעוזר הדיגיטלי באתר עונה לפיהם ללקוחות.</p>
+        <nav class="admin-jump" aria-label="מעבר בין הכלים">
+          <a href="#receipts">קבלות</a>
+          <a href="#bot-docs">מסמכים לעוזר הדיגיטלי</a>
+        </nav>
+      </div>
+    </section>
+
+    <section class="admin-section-head" id="receipts">
+      <div class="wrap">
+        <h2>קבלות</h2>
         <p class="lede">מצלמים את הקבלה והיא נסרקת לבד: הספק, התאריך והסכום מזוהים אוטומטית, הקובץ נשמר בתיקיית החודש בדרייב, ושורה חדשה נכתבת בגיליון — מוכן להעברה לרואת החשבון.</p>
       </div>
     </section>
@@ -135,6 +146,83 @@
         </div>
       </div>
     </section>
+
+    <section class="admin-section-head" id="bot-docs">
+      <div class="wrap">
+        <h2>מסמכים לעוזר הדיגיטלי</h2>
+        <p class="lede">העוזר בצ'אט באתר עונה ללקוחות על מחירים, זמני הזמנה וביטולים רק לפי המסמכים כאן. מעלים גרסה חדשה, והגרסה הקודמת נמחקת רק אחרי שהחדשה נשמרה במלואה. אם משהו נכשל באמצע, העוזר ממשיך לענות לפי הגרסה הקודמת.</p>
+      </div>
+    </section>
+
+    <section class="admin-docs-section">
+      <div class="wrap">
+        <div class="docs-panel">
+          <fieldset class="doc-type-picker" id="doc-type-picker">
+            <legend>איזה מסמך מעלים?</legend>
+            <label class="doc-type-option">
+              <input type="radio" name="doc-type" value="מחירון" checked>
+              <span class="doc-type-name">מחירון</span>
+              <span class="doc-type-hint">מחליף את המחירון הקודם</span>
+            </label>
+            <label class="doc-type-option">
+              <input type="radio" name="doc-type" value="תנאי הזמנה">
+              <span class="doc-type-name">תנאי הזמנה</span>
+              <span class="doc-type-hint">זמני אספקה, ביטולים ותשלום</span>
+            </label>
+          </fieldset>
+
+          <div class="dropzone doc-dropzone" id="doc-dropzone" tabindex="0" role="button" aria-label="בחירת מסמך: גררו קובץ לכאן או לחצו לבחירה">
+            <span class="dropzone-icon-badge"><svg><use href="#i-upload"/></svg></span>
+            <p class="dropzone-title">גררו את המסמך לכאן</p>
+            <p class="dropzone-sub">או לחצו לבחירה: קובץ וורד, PDF או טקסט</p>
+            <input type="file" id="doc-file-input" accept=".docx,.pdf,.txt,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain" hidden>
+          </div>
+
+          <div class="doc-selected" id="doc-selected" hidden>
+            <span class="file-item-icon"><svg><use href="#i-file"/></svg></span>
+            <span class="doc-selected-name" id="doc-selected-name"></span>
+            <span class="file-item-size" id="doc-selected-size"></span>
+            <button type="button" class="file-item-remove" id="doc-selected-remove" aria-label="הסרת הקובץ"><svg><use href="#i-x"/></svg></button>
+          </div>
+
+          <ol class="doc-steps" id="doc-steps" hidden>
+            <li class="doc-step" data-step="upload"><span class="doc-step-dot"></span><span class="doc-step-label">שליחת הקובץ</span></li>
+            <li class="doc-step" data-step="saving"><span class="doc-step-dot"></span><span class="doc-step-label">פירוק לחתיכות ושמירה במאגר</span></li>
+            <li class="doc-step" data-step="replacing"><span class="doc-step-dot"></span><span class="doc-step-label">מחיקת הגרסה הקודמת</span></li>
+            <li class="doc-step" data-step="done"><span class="doc-step-dot"></span><span class="doc-step-label">אישור</span></li>
+          </ol>
+
+          <div class="doc-result" id="doc-result" hidden>
+            <p class="doc-result-title" id="doc-result-title"></p>
+            <p class="doc-result-detail" id="doc-result-detail"></p>
+          </div>
+
+          <button type="button" class="btn btn-primary btn-block" id="doc-submit-btn" disabled>העלאה והחלפה</button>
+          <p class="admin-note" id="doc-status">בחרו סוג מסמך וקובץ כדי להמשיך.</p>
+
+          <details class="doc-test-tools">
+            <summary>כלי בדיקה</summary>
+            <label class="doc-test-toggle">
+              <input type="checkbox" id="doc-simulate-failure">
+              <span>לדמות כישלון באמצע ההעלאה — החתיכות החדשות נכתבות, ואז ההעלאה נעצרת. הגרסה הקודמת אמורה להישאר פעילה.</span>
+            </label>
+          </details>
+        </div>
+
+        <div class="docs-list-panel">
+          <div class="receipts-panel-head">
+            <h2>מסמכים פעילים</h2>
+            <div class="receipts-panel-actions">
+              <button type="button" class="receipts-refresh-btn" id="docs-refresh-btn" aria-label="רענון הרשימה">
+                <svg><use href="#i-refresh"/></svg>
+              </button>
+            </div>
+          </div>
+          <p class="admin-note" id="docs-list-status">טוען מסמכים...</p>
+          <ul class="docs-list" id="docs-list"></ul>
+        </div>
+      </div>
+    </section>
   </div>
 </main>
 
@@ -149,5 +237,6 @@
 </div>
 
 <script src="script.js"></script>
+<script src="docs.js"></script>
 </body>
 </html>

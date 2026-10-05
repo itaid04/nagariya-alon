@@ -15,6 +15,8 @@
   var unlock = function () {
     gateSection.hidden = true;
     content.hidden = false;
+    // docs.js (מסמכים לעוזר הדיגיטלי) מאזין לאירוע הזה כדי לטעון את רשימת המסמכים
+    document.dispatchEvent(new Event("admin-unlocked"));
     if (!receiptsListLoaded) {
       receiptsListLoaded = true;
       loadReceiptsList();

@@ -18,6 +18,87 @@
   .gate-panel{animation:admin-rise .55s ease both}
 }
 
+/* ---------- מעטפת: כותרת כהה, קו עץ, סרגל צד ומסכים ----------
+   אותו מבנה כמו ממשק העובדים של זוהר מטבחים: רצועת מותג כהה למעלה,
+   סרגל ניווט בצד ימין, ורק המסך הפעיל מוצג. במחשב רק אזור התוכן נגלל,
+   והכותרת והסרגל נשארים במקום. בטלפון הסרגל הופך לשורה עליונה. */
+body{background:var(--paper)}
+
+.admin-header{
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+  padding:12px 22px;background:var(--walnut-deep);color:var(--paper);
+}
+.admin-brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:inherit;min-width:0}
+.admin-brand .brand-mark{width:32px;height:32px}
+.admin-brand-name{font-family:"Frank Ruhl Libre",serif;font-size:19px;color:var(--paper);white-space:nowrap}
+.admin-brand-sub{
+  font-size:12px;font-weight:600;letter-spacing:.04em;color:rgba(243,234,214,.6);
+  padding-inline-start:10px;border-inline-start:1px solid rgba(243,234,214,.22);white-space:nowrap;
+}
+.admin-header-actions{display:flex;align-items:center;gap:12px;flex:none}
+.admin-header-link{font-size:13px;font-weight:600;color:rgba(243,234,214,.75);text-decoration:none;padding:6px 4px}
+.admin-header-link:hover{color:var(--paper)}
+.admin-logout{
+  font-family:"Rubik",sans-serif;font-size:13px;color:var(--paper);background:none;cursor:pointer;
+  border:1px solid rgba(243,234,214,.26);padding:0 14px;min-height:32px;
+  transition:border-color .16s ease,background-color .16s ease;
+}
+.admin-logout[hidden]{display:none}
+.admin-logout:hover{border-color:var(--oak);background:rgba(185,135,76,.18)}
+.admin-logout:focus-visible,.admin-header-link:focus-visible,.admin-nav-link:focus-visible{outline:2px solid var(--oak);outline-offset:2px}
+.admin-wood-line{height:3px;background:var(--oak)}
+
+.admin-shell{display:flex;min-height:calc(100svh - 59px)}
+.admin-shell[hidden]{display:none!important}
+.admin-sidebar{width:220px;flex:none;background:var(--walnut);padding:18px 0}
+.admin-sidebar ul{list-style:none;margin:0;padding:0}
+.admin-nav-link{
+  display:flex;align-items:center;gap:11px;padding:12px 20px;
+  font-size:14px;color:rgba(243,234,214,.62);text-decoration:none;
+  border-inline-end:3px solid transparent;
+  transition:color .14s ease,background-color .14s ease,padding .14s ease;
+}
+.admin-nav-link svg{width:18px;height:18px;flex:none}
+.admin-nav-link:hover{color:var(--paper);background:rgba(243,234,214,.06);padding-inline-start:24px}
+.admin-nav-link.is-active{color:var(--paper);background:rgba(243,234,214,.09);border-inline-end-color:var(--oak);font-weight:600}
+.admin-nav-link.is-active svg{color:var(--oak)}
+
+.admin-content-area{flex:1;min-width:0}
+.admin-view{padding:34px clamp(20px,3vw,40px) 70px;max-width:1320px;margin-inline:auto}
+.admin-view[hidden]{display:none}
+.admin-view-head{max-width:680px;margin-bottom:26px}
+.admin-view-head h1{font-size:clamp(28px,3vw,36px)}
+.admin-view-head .lede{margin-top:10px;font-size:15px;color:var(--ink-soft);line-height:1.75}
+
+/* שני הפאנלים של כל מסך: זה לצד זה במסך רחב, אחד מתחת לשני בצר */
+.admin-view-grid{display:grid;grid-template-columns:1fr;gap:24px;align-items:start;max-width:680px}
+@media (min-width:1180px){.admin-view-grid{grid-template-columns:minmax(0,1fr) minmax(0,1fr);max-width:none}}
+
+@media (min-width:861px){
+  body:has(.admin-shell:not([hidden])){height:100svh;overflow:hidden;display:flex;flex-direction:column}
+  body:has(.admin-shell:not([hidden])) #main{flex:1;min-height:0;display:flex}
+  body:has(.admin-shell:not([hidden])) .admin-shell{flex:1;min-height:0}
+  .admin-sidebar{overflow-y:auto}
+  /* פס הגלילה בין הסרגל לתוכן (כמו בזוהר): האזור עצמו LTR, והמסך שבתוכו חוזר ל-RTL */
+  .admin-content-area{overflow-y:auto;scrollbar-gutter:stable;direction:ltr}
+  .admin-view{direction:rtl}
+}
+
+@media (max-width:860px){
+  .admin-shell{flex-direction:column;min-height:0}
+  .admin-sidebar{width:100%;padding:0}
+  .admin-sidebar ul{display:flex;overflow-x:auto;scrollbar-width:none}
+  .admin-sidebar ul::-webkit-scrollbar{display:none}
+  .admin-nav-link{white-space:nowrap;border-inline-end:0;border-bottom:3px solid transparent;padding:13px 16px}
+  .admin-nav-link:hover{padding-inline-start:16px}
+  .admin-nav-link.is-active{border-bottom-color:var(--oak)}
+  .admin-view{padding:24px 16px 60px}
+}
+@media (max-width:560px){
+  .admin-brand-sub{display:none}
+  .admin-header{padding:10px 16px}
+}
+
 /* ---------- מיכל "לוח קצוץ" משותף לכל הפאנלים ---------- */
 .gate-panel,.upload-panel,.receipts-panel{
   background:var(--card);
@@ -25,7 +106,7 @@
   clip-path:polygon(0 0, calc(100% - var(--cut-md)) 0, 100% var(--cut-md), 100% 100%, 0 100%);
 }
 
-.admin-gate-section{padding:150px 0 60px;min-height:60vh;display:flex;align-items:center}
+.admin-gate-section{padding:70px 0;min-height:70vh;display:flex;align-items:center}
 .gate-panel{max-width:380px;margin:0 auto;text-align:center;padding:40px 34px 36px}
 .gate-icon-badge{
   width:52px;height:52px;border-radius:50%;background:var(--walnut);color:var(--paper);
@@ -43,14 +124,8 @@
 .gate-form input:focus{border-color:var(--walnut);outline:none}
 .gate-error{color:#8a3320}
 
-/* ---------- כותרת האזור ---------- */
-.admin-hero{padding:150px 0 22px}
-.admin-hero h1{font-size:clamp(30px,4vw,42px);margin-top:6px}
-.admin-hero .lede{margin-top:14px;font-size:16.5px;color:var(--ink-soft);max-width:580px;line-height:1.75}
-
 /* ---------- העלאה ---------- */
-.admin-upload-section{padding:24px 0 80px}
-.upload-panel{max-width:640px;margin:0 auto;padding:34px}
+.upload-panel{padding:34px}
 
 .camera-btn[hidden]{display:none!important}
 .camera-btn{margin:0 0 16px}
@@ -158,8 +233,7 @@
 @media (max-width:560px){.upload-panel{padding:26px 22px}}
 
 /* ---------- קבלות שהועלו ---------- */
-.admin-receipts-section{padding:24px 0 90px}
-.receipts-panel{max-width:640px;margin:0 auto;padding:34px}
+.receipts-panel{padding:34px}
 .receipts-panel-head{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px 12px}
 .receipts-panel-head h2{font-size:19px;font-family:"Frank Ruhl Libre",serif}
 .receipts-panel-actions{display:flex;align-items:center;gap:14px}
@@ -264,28 +338,12 @@
 .mrf-value{font-size:12.5px;color:var(--ink);font-variant-numeric:tabular-nums}
 .mrf-value.ltr{direction:ltr;unicode-bidi:isolate;display:inline-block}
 
-/* ---------- ניווט בין הכלים + כותרות אזור ---------- */
-.admin-jump{margin-top:22px;display:flex;flex-wrap:wrap;gap:8px}
-.admin-jump a{
-  font-size:13px;font-weight:600;color:var(--ink-soft);text-decoration:none;
-  background:var(--paper);border:1px solid var(--line);border-bottom-width:3px;padding:8px 15px 6px;
-  transition:border-color .15s ease,color .15s ease,transform .15s ease;
-}
-.admin-jump a:hover{border-color:var(--walnut);color:var(--ink);transform:translateY(-1px)}
-.admin-section-head{padding:34px 0 0;scroll-margin-top:90px}
-.admin-section-head .wrap > *{max-width:640px;margin-inline:auto}
-.admin-section-head h2{font-family:"Frank Ruhl Libre",serif;font-size:clamp(24px,3vw,30px);padding-top:22px;border-top:1px solid var(--line)}
-.admin-section-head .lede{margin-top:10px;font-size:15px;color:var(--ink-soft);line-height:1.75}
-.admin-upload-section{padding-top:22px}
-
 /* ---------- מסמכים לעוזר הדיגיטלי ---------- */
-.admin-docs-section{padding:22px 0 100px}
 .docs-panel,.docs-list-panel{
-  max-width:640px;margin:0 auto;padding:34px;
+  padding:34px;
   background:var(--card);box-shadow:var(--shadow-sm);
   clip-path:polygon(0 0, calc(100% - var(--cut-md)) 0, 100% var(--cut-md), 100% 100%, 0 100%);
 }
-.docs-list-panel{margin-top:24px}
 @media (max-width:560px){.docs-panel,.docs-list-panel{padding:26px 22px}}
 
 .doc-type-picker{border:none;padding:0;margin:0 0 20px;display:grid;grid-template-columns:repeat(2,1fr);gap:10px}

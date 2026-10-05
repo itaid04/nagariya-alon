@@ -43,22 +43,26 @@
   <symbol id="i-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
     <circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/>
   </symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M4 5.5A1.5 1.5 0 015.5 4h13A1.5 1.5 0 0120 5.5v9a1.5 1.5 0 01-1.5 1.5H10l-4.5 4v-4h0A1.5 1.5 0 014 14.5z"/><path d="M8.5 9h7M8.5 12h4.5"/>
+  </symbol>
   <symbol id="i-folder" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">
     <path d="M3.5 6.5A1.5 1.5 0 015 5h4l2 2.2h8A1.5 1.5 0 0120.5 8.7v9.3A1.5 1.5 0 0119 19.5H5A1.5 1.5 0 013.5 18z"/>
   </symbol>
 </svg>
 
-<nav class="nav">
-  <div class="wrap nav-inner">
-    <a class="brand" href="../index.html">
-      <span class="brand-mark"><img src="https://res.cloudinary.com/gom9owzu/image/upload/v1787850329/nagariya-alon/logo.jpg" alt="לוגו אלון נגרות" width="38" height="38"></span>
-      <span>אלון ברששת</span>
-    </a>
-    <div class="nav-cta">
-      <a class="tel-link" href="../index.html">חזרה לאתר</a>
-    </div>
+<header class="admin-header">
+  <a class="admin-brand" href="../index.html">
+    <span class="brand-mark"><img src="https://res.cloudinary.com/gom9owzu/image/upload/v1787850329/nagariya-alon/logo.jpg" alt="לוגו אלון נגרות" width="32" height="32"></span>
+    <span class="admin-brand-name">אלון ברששת</span>
+    <span class="admin-brand-sub">פאנל ניהול</span>
+  </a>
+  <div class="admin-header-actions">
+    <a class="admin-header-link" href="../index.html">חזרה לאתר</a>
+    <button type="button" class="admin-logout" id="admin-logout" hidden>יציאה</button>
   </div>
-</nav>
+</header>
+<div class="admin-wood-line"></div>
 
 <main id="main">
   <section class="admin-gate-section" id="admin-gate-section">
@@ -76,153 +80,138 @@
     </div>
   </section>
 
-  <div id="admin-content" hidden>
-    <section class="admin-hero">
-      <div class="wrap">
-        <div class="eyebrow"><svg><use href="#i-file"/></svg> אזור ניהול</div>
-        <h1>פאנל ניהול</h1>
-        <p class="lede">שני כלים במקום אחד: קבלות שנסרקות לבד לרואת החשבון, והמסמכים שהעוזר הדיגיטלי באתר עונה לפיהם ללקוחות.</p>
-        <nav class="admin-jump" aria-label="מעבר בין הכלים">
-          <a href="#receipts">קבלות</a>
-          <a href="#bot-docs">מסמכים לעוזר הדיגיטלי</a>
-        </nav>
-      </div>
-    </section>
+  <div id="admin-content" class="admin-shell" hidden>
+    <nav class="admin-sidebar" aria-label="ניווט בפאנל הניהול">
+      <ul>
+        <li><a class="admin-nav-link" href="#receipts" data-view="receipts"><svg><use href="#i-file"/></svg><span>קבלות</span></a></li>
+        <li><a class="admin-nav-link" href="#bot-docs" data-view="bot-docs"><svg><use href="#i-chat"/></svg><span>מסמכים לעוזר הדיגיטלי</span></a></li>
+      </ul>
+    </nav>
 
-    <section class="admin-section-head" id="receipts">
-      <div class="wrap">
-        <h2>קבלות</h2>
-        <p class="lede">מצלמים את הקבלה והיא נסרקת לבד: הספק, התאריך והסכום מזוהים אוטומטית, הקובץ נשמר בתיקיית החודש בדרייב, ושורה חדשה נכתבת בגיליון — מוכן להעברה לרואת החשבון.</p>
-      </div>
-    </section>
+    <div class="admin-content-area">
+      <section class="admin-view" id="view-receipts" data-view="receipts" aria-labelledby="view-receipts-title">
+        <header class="admin-view-head">
+          <h1 id="view-receipts-title">קבלות</h1>
+          <p class="lede">מצלמים את הקבלה והיא נסרקת לבד: הספק, התאריך והסכום מזוהים אוטומטית, הקובץ נשמר בתיקיית החודש בדרייב, ושורה חדשה נכתבת בגיליון — מוכן להעברה לרואת החשבון.</p>
+        </header>
+        <div class="admin-view-grid">
+          <div class="upload-panel">
+            <button type="button" class="btn btn-primary btn-block camera-btn" id="camera-btn" hidden>
+              <svg><use href="#i-camera"/></svg> צילום קבלה
+            </button>
+            <input type="file" id="camera-input" accept="image/*" capture="environment" hidden>
 
-    <section class="admin-upload-section">
-      <div class="wrap">
-        <div class="upload-panel">
-          <button type="button" class="btn btn-primary btn-block camera-btn" id="camera-btn" hidden>
-            <svg><use href="#i-camera"/></svg> צילום קבלה
-          </button>
-          <input type="file" id="camera-input" accept="image/*" capture="environment" hidden>
-
-          <div class="dropzone" id="dropzone" tabindex="0" role="button" aria-label="העלאת קבלות: גררו קבצים לכאן או לחצו לבחירה">
-            <span class="dropzone-icon-badge"><svg><use href="#i-upload"/></svg></span>
-            <p class="dropzone-title">גררו קבצים לכאן</p>
-            <p class="dropzone-sub">או לחצו לבחירת קבצים — תמונות או PDF</p>
-            <input type="file" id="file-input" accept="image/*,.pdf" multiple hidden>
-          </div>
-
-          <p class="mobile-hint" id="mobile-hint" hidden>
-            <svg><use href="#i-alert"/></svg>
-            <span>עד 4 קבלות בכל פעם, כדי לא להעמיס על החיבור הסלולרי.</span>
-          </p>
-
-          <ul class="file-list" id="file-list"></ul>
-
-          <button type="button" class="btn btn-primary btn-block" id="upload-submit-btn" disabled>העלאת קבלות</button>
-          <button type="button" class="clear-done-btn" id="clear-done-btn" hidden>הסרת הקבלות שהושלמו</button>
-          <p class="admin-note" id="admin-status">בחרו קובץ אחד לפחות כדי להמשיך.</p>
-        </div>
-      </div>
-    </section>
-
-    <section class="admin-receipts-section">
-      <div class="wrap">
-        <div class="receipts-panel">
-          <div class="receipts-panel-head">
-            <h2>קבלות שהועלו</h2>
-            <div class="receipts-panel-actions">
-              <a class="drive-link" href="https://drive.google.com/drive/folders/1yPxk6-xtVIdFoXm2DdFA3DTe1TrjZcWN" target="_blank" rel="noopener noreferrer">
-                <svg><use href="#i-folder"/></svg> תיקיית הדרייב
-              </a>
-              <button type="button" class="receipts-refresh-btn" id="receipts-refresh-btn" aria-label="רענון הרשימה">
-                <svg><use href="#i-refresh"/></svg>
-              </button>
+            <div class="dropzone" id="dropzone" tabindex="0" role="button" aria-label="העלאת קבלות: גררו קבצים לכאן או לחצו לבחירה">
+              <span class="dropzone-icon-badge"><svg><use href="#i-upload"/></svg></span>
+              <p class="dropzone-title">גררו קבצים לכאן</p>
+              <p class="dropzone-sub">או לחצו לבחירת קבצים — תמונות או PDF</p>
+              <input type="file" id="file-input" accept="image/*,.pdf" multiple hidden>
             </div>
+
+            <p class="mobile-hint" id="mobile-hint" hidden>
+              <svg><use href="#i-alert"/></svg>
+              <span>עד 4 קבלות בכל פעם, כדי לא להעמיס על החיבור הסלולרי.</span>
+            </p>
+
+            <ul class="file-list" id="file-list"></ul>
+
+            <button type="button" class="btn btn-primary btn-block" id="upload-submit-btn" disabled>העלאת קבלות</button>
+            <button type="button" class="clear-done-btn" id="clear-done-btn" hidden>הסרת הקבלות שהושלמו</button>
+            <p class="admin-note" id="admin-status">בחרו קובץ אחד לפחות כדי להמשיך.</p>
           </div>
-          <p class="receipts-monthly-total" id="receipts-monthly-total" hidden></p>
-          <p class="admin-note" id="receipts-status">טוען קבלות...</p>
-          <div class="receipts-months" id="receipts-months" hidden></div>
-          <ul class="receipts-list" id="receipts-list"></ul>
-        </div>
-      </div>
-    </section>
-
-    <section class="admin-section-head" id="bot-docs">
-      <div class="wrap">
-        <h2>מסמכים לעוזר הדיגיטלי</h2>
-        <p class="lede">העוזר בצ'אט באתר עונה ללקוחות על מחירים, זמני הזמנה וביטולים רק לפי המסמכים כאן. מעלים גרסה חדשה, והגרסה הקודמת נמחקת רק אחרי שהחדשה נשמרה במלואה. אם משהו נכשל באמצע, העוזר ממשיך לענות לפי הגרסה הקודמת.</p>
-      </div>
-    </section>
-
-    <section class="admin-docs-section">
-      <div class="wrap">
-        <div class="docs-panel">
-          <fieldset class="doc-type-picker" id="doc-type-picker">
-            <legend>איזה מסמך מעלים?</legend>
-            <label class="doc-type-option">
-              <input type="radio" name="doc-type" value="מחירון" checked>
-              <span class="doc-type-name">מחירון</span>
-              <span class="doc-type-hint">מחליף את המחירון הקודם</span>
-            </label>
-            <label class="doc-type-option">
-              <input type="radio" name="doc-type" value="תנאי הזמנה">
-              <span class="doc-type-name">תנאי הזמנה</span>
-              <span class="doc-type-hint">זמני אספקה, ביטולים ותשלום</span>
-            </label>
-          </fieldset>
-
-          <div class="dropzone doc-dropzone" id="doc-dropzone" tabindex="0" role="button" aria-label="בחירת מסמך: גררו קובץ לכאן או לחצו לבחירה">
-            <span class="dropzone-icon-badge"><svg><use href="#i-upload"/></svg></span>
-            <p class="dropzone-title">גררו את המסמך לכאן</p>
-            <p class="dropzone-sub">או לחצו לבחירה: קובץ וורד, PDF או טקסט</p>
-            <input type="file" id="doc-file-input" accept=".docx,.pdf,.txt,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain" hidden>
-          </div>
-
-          <div class="doc-selected" id="doc-selected" hidden>
-            <span class="file-item-icon"><svg><use href="#i-file"/></svg></span>
-            <span class="doc-selected-name" id="doc-selected-name"></span>
-            <span class="file-item-size" id="doc-selected-size"></span>
-            <button type="button" class="file-item-remove" id="doc-selected-remove" aria-label="הסרת הקובץ"><svg><use href="#i-x"/></svg></button>
-          </div>
-
-          <ol class="doc-steps" id="doc-steps" hidden>
-            <li class="doc-step" data-step="upload"><span class="doc-step-dot"></span><span class="doc-step-label">שליחת הקובץ</span></li>
-            <li class="doc-step" data-step="saving"><span class="doc-step-dot"></span><span class="doc-step-label">פירוק לחתיכות ושמירה במאגר</span></li>
-            <li class="doc-step" data-step="replacing"><span class="doc-step-dot"></span><span class="doc-step-label">מחיקת הגרסה הקודמת</span></li>
-            <li class="doc-step" data-step="done"><span class="doc-step-dot"></span><span class="doc-step-label">אישור</span></li>
-          </ol>
-
-          <div class="doc-result" id="doc-result" hidden>
-            <p class="doc-result-title" id="doc-result-title"></p>
-            <p class="doc-result-detail" id="doc-result-detail"></p>
-          </div>
-
-          <button type="button" class="btn btn-primary btn-block" id="doc-submit-btn" disabled>העלאה והחלפה</button>
-          <p class="admin-note" id="doc-status">בחרו סוג מסמך וקובץ כדי להמשיך.</p>
-
-          <details class="doc-test-tools">
-            <summary>כלי בדיקה</summary>
-            <label class="doc-test-toggle">
-              <input type="checkbox" id="doc-simulate-failure">
-              <span>לדמות כישלון באמצע ההעלאה — החתיכות החדשות נכתבות, ואז ההעלאה נעצרת. הגרסה הקודמת אמורה להישאר פעילה.</span>
-            </label>
-          </details>
-        </div>
-
-        <div class="docs-list-panel">
-          <div class="receipts-panel-head">
-            <h2>מסמכים פעילים</h2>
-            <div class="receipts-panel-actions">
-              <button type="button" class="receipts-refresh-btn" id="docs-refresh-btn" aria-label="רענון הרשימה">
-                <svg><use href="#i-refresh"/></svg>
-              </button>
+          <div class="receipts-panel">
+            <div class="receipts-panel-head">
+              <h2>קבלות שהועלו</h2>
+              <div class="receipts-panel-actions">
+                <a class="drive-link" href="https://drive.google.com/drive/folders/1yPxk6-xtVIdFoXm2DdFA3DTe1TrjZcWN" target="_blank" rel="noopener noreferrer">
+                  <svg><use href="#i-folder"/></svg> תיקיית הדרייב
+                </a>
+                <button type="button" class="receipts-refresh-btn" id="receipts-refresh-btn" aria-label="רענון הרשימה">
+                  <svg><use href="#i-refresh"/></svg>
+                </button>
+              </div>
             </div>
+            <p class="receipts-monthly-total" id="receipts-monthly-total" hidden></p>
+            <p class="admin-note" id="receipts-status">טוען קבלות...</p>
+            <div class="receipts-months" id="receipts-months" hidden></div>
+            <ul class="receipts-list" id="receipts-list"></ul>
           </div>
-          <p class="admin-note" id="docs-list-status">טוען מסמכים...</p>
-          <ul class="docs-list" id="docs-list"></ul>
         </div>
-      </div>
-    </section>
+      </section>
+
+      <section class="admin-view" id="view-bot-docs" data-view="bot-docs" aria-labelledby="view-bot-docs-title" hidden>
+        <header class="admin-view-head">
+          <h1 id="view-bot-docs-title">מסמכים לעוזר הדיגיטלי</h1>
+          <p class="lede">העוזר בצ'אט באתר עונה ללקוחות על מחירים, זמני הזמנה וביטולים רק לפי המסמכים כאן. מעלים גרסה חדשה, והגרסה הקודמת נמחקת רק אחרי שהחדשה נשמרה במלואה. אם משהו נכשל באמצע, העוזר ממשיך לענות לפי הגרסה הקודמת.</p>
+        </header>
+        <div class="admin-view-grid">
+          <div class="docs-panel">
+            <fieldset class="doc-type-picker" id="doc-type-picker">
+              <legend>איזה מסמך מעלים?</legend>
+              <label class="doc-type-option">
+                <input type="radio" name="doc-type" value="מחירון" checked>
+                <span class="doc-type-name">מחירון</span>
+                <span class="doc-type-hint">מחליף את המחירון הקודם</span>
+              </label>
+              <label class="doc-type-option">
+                <input type="radio" name="doc-type" value="תנאי הזמנה">
+                <span class="doc-type-name">תנאי הזמנה</span>
+                <span class="doc-type-hint">זמני אספקה, ביטולים ותשלום</span>
+              </label>
+            </fieldset>
+
+            <div class="dropzone doc-dropzone" id="doc-dropzone" tabindex="0" role="button" aria-label="בחירת מסמך: גררו קובץ לכאן או לחצו לבחירה">
+              <span class="dropzone-icon-badge"><svg><use href="#i-upload"/></svg></span>
+              <p class="dropzone-title">גררו את המסמך לכאן</p>
+              <p class="dropzone-sub">או לחצו לבחירה: קובץ וורד, PDF או טקסט</p>
+              <input type="file" id="doc-file-input" accept=".docx,.pdf,.txt,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain" hidden>
+            </div>
+
+            <div class="doc-selected" id="doc-selected" hidden>
+              <span class="file-item-icon"><svg><use href="#i-file"/></svg></span>
+              <span class="doc-selected-name" id="doc-selected-name"></span>
+              <span class="file-item-size" id="doc-selected-size"></span>
+              <button type="button" class="file-item-remove" id="doc-selected-remove" aria-label="הסרת הקובץ"><svg><use href="#i-x"/></svg></button>
+            </div>
+
+            <ol class="doc-steps" id="doc-steps" hidden>
+              <li class="doc-step" data-step="upload"><span class="doc-step-dot"></span><span class="doc-step-label">שליחת הקובץ</span></li>
+              <li class="doc-step" data-step="saving"><span class="doc-step-dot"></span><span class="doc-step-label">פירוק לחתיכות ושמירה במאגר</span></li>
+              <li class="doc-step" data-step="replacing"><span class="doc-step-dot"></span><span class="doc-step-label">מחיקת הגרסה הקודמת</span></li>
+              <li class="doc-step" data-step="done"><span class="doc-step-dot"></span><span class="doc-step-label">אישור</span></li>
+            </ol>
+
+            <div class="doc-result" id="doc-result" hidden>
+              <p class="doc-result-title" id="doc-result-title"></p>
+              <p class="doc-result-detail" id="doc-result-detail"></p>
+            </div>
+
+            <button type="button" class="btn btn-primary btn-block" id="doc-submit-btn" disabled>העלאה והחלפה</button>
+            <p class="admin-note" id="doc-status">בחרו סוג מסמך וקובץ כדי להמשיך.</p>
+
+            <details class="doc-test-tools">
+              <summary>כלי בדיקה</summary>
+              <label class="doc-test-toggle">
+                <input type="checkbox" id="doc-simulate-failure">
+                <span>לדמות כישלון באמצע ההעלאה — החתיכות החדשות נכתבות, ואז ההעלאה נעצרת. הגרסה הקודמת אמורה להישאר פעילה.</span>
+              </label>
+            </details>
+          </div>
+          <div class="docs-list-panel">
+            <div class="receipts-panel-head">
+              <h2>מסמכים פעילים</h2>
+              <div class="receipts-panel-actions">
+                <button type="button" class="receipts-refresh-btn" id="docs-refresh-btn" aria-label="רענון הרשימה">
+                  <svg><use href="#i-refresh"/></svg>
+                </button>
+              </div>
+            </div>
+            <p class="admin-note" id="docs-list-status">טוען מסמכים...</p>
+            <ul class="docs-list" id="docs-list"></ul>
+          </div>
+        </div>
+      </section>
+    </div>
   </div>
 </main>
 
@@ -238,5 +227,6 @@
 
 <script src="script.js"></script>
 <script src="docs.js"></script>
+<script src="shell.js"></script>
 </body>
 </html>

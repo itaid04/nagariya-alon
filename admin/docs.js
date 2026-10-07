@@ -14,6 +14,14 @@
   var POLL_MAX_ATTEMPTS = 90; // 3 דקות
   var DOC_TYPES = ["מחירון", "תנאי הזמנה"];
   var STEP_ORDER = ["upload", "saving", "replacing", "done"];
+  // "המחירון הוחלף" אבל "תנאי ההזמנה הוחלפו" - ה' הידיעה והפועל תלויים בסוג המסמך
+  var DOC_WORDING = {
+    "מחירון": { definite: "המחירון", replaced: "הוחלף" },
+    "תנאי הזמנה": { definite: "תנאי ההזמנה", replaced: "הוחלפו" }
+  };
+  var docWording = function (docType) {
+    return DOC_WORDING[docType] || { definite: "המסמך " + docType, replaced: "הוחלף" };
+  };
   var STEP_NAMES = {
     upload: "שליחת הקובץ",
     saving: "פירוק לחתיכות ושמירה במאגר",
@@ -188,7 +196,7 @@
           setSteps("complete");
           showResult(
             "success",
-            "ה" + docType + " הוחלף בהצלחה",
+            docWording(docType).definite + " " + docWording(docType).replaced + " בהצלחה",
             (data.chunkCount === 1 ? "נכנסה חתיכה אחת חדשה" : "נכנסו " + data.chunkCount + " חתיכות חדשות") + " למאגר, והגרסה הקודמת נמחקה. העוזר הדיגיטלי עונה מעכשיו לפי \"" + (splitFileName(data.fileName).base || "הקובץ החדש") + "\"."
           );
           statusEl.textContent = "";
@@ -208,7 +216,7 @@
             "error",
             "ההעלאה נכשלה בשלב: " + STEP_NAMES[failedStep],
             (data.errorMessage ? data.errorMessage + ". " : "") +
-              "החתיכות של ההעלאה הזו נמחקו, והגרסה הקודמת של ה" + docType + " עדיין פעילה. העוזר הדיגיטלי ממשיך לענות לפיה."
+              "החתיכות של ההעלאה הזו נמחקו, והגרסה הקודמת של " + docWording(docType).definite + " עדיין פעילה. העוזר הדיגיטלי ממשיך לענות לפיה."
           );
           statusEl.textContent = "";
           finish();

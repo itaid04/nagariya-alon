@@ -73,6 +73,11 @@
     }
   };
 
+  // "חתיכה אחת" ולא "1 חתיכות"
+  var chunksLabel = function (count) {
+    return count === 1 ? "חתיכה אחת" : count + " חתיכות";
+  };
+
   var newUploadId = function () {
     return (window.crypto && crypto.randomUUID)
       ? crypto.randomUUID()
@@ -184,7 +189,7 @@
           showResult(
             "success",
             "ה" + docType + " הוחלף בהצלחה",
-            "נכנסו " + data.chunkCount + " חתיכות חדשות למאגר, והגרסה הקודמת נמחקה. העוזר הדיגיטלי עונה מעכשיו לפי \"" + (splitFileName(data.fileName).base || "הקובץ החדש") + "\"."
+            (data.chunkCount === 1 ? "נכנסה חתיכה אחת חדשה" : "נכנסו " + data.chunkCount + " חתיכות חדשות") + " למאגר, והגרסה הקודמת נמחקה. העוזר הדיגיטלי עונה מעכשיו לפי \"" + (splitFileName(data.fileName).base || "הקובץ החדש") + "\"."
           );
           statusEl.textContent = "";
           finish();
@@ -295,7 +300,7 @@
         li.querySelector(".doc-card-file").textContent = "עדיין לא הועלה. העוזר לא יודע לענות על נושא זה.";
         li.querySelector(".doc-card-updated").hidden = true;
       } else {
-        li.querySelector(".doc-card-chunks").textContent = doc.active.chunkCount + " חתיכות";
+        li.querySelector(".doc-card-chunks").textContent = chunksLabel(doc.active.chunkCount);
         renderFileName(li.querySelector(".doc-card-file"), doc.active.fileName || "קובץ ללא שם");
         var updated = li.querySelector(".doc-card-updated");
         var when = doc.active.uploadedAt ? formatDateTime(doc.active.uploadedAt) : "";
@@ -307,7 +312,7 @@
         if (doc.pending && doc.pending.length) {
           var pendingEl = li.querySelector(".doc-card-pending");
           pendingEl.hidden = false;
-          pendingEl.textContent = "גרסה חדשה בתהליך העלאה (" + doc.pending[0].chunkCount + " חתיכות עד עכשיו). עד שתסתיים, העוזר עונה גם לפי הגרסה הזו.";
+          pendingEl.textContent = "גרסה חדשה בתהליך העלאה (" + chunksLabel(doc.pending[0].chunkCount) + " עד עכשיו). עד שתסתיים, העוזר עונה גם לפי הגרסה הזו.";
         }
       }
       listEl.appendChild(li);
